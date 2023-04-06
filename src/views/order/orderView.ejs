@@ -1,0 +1,162 @@
+<%- include("../partials/_header") %>
+  <main id="main" class="main">
+    <div class="pagetitle">
+      <h1>In-Stock History</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/">Home</a></li>
+          <li class="breadcrumb-item"><a href="/viewStock">Stock Overview</a></li>
+          <li class="breadcrumb-item active">In Stock History</li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section dashboard">
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="row">
+            <div class="col-xxl-12 col-md-12 d-flex justify-content-end">
+              <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#basicModal">
+                Add In-Stock
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <hr>
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="row">
+            <div class="col-xxl-12 col-md-12">
+              <table id="example" class="ui celled table" style="width:100%">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Material Type</th>
+                    <th>Rate</th>
+                    <th>Weight</th>
+                    <th>Amount</th>
+                    <th>Created On</th>
+
+                  </tr>
+                </thead>
+                <tbody>
+                  <% if(stocks) { for(var idx=0; idx<stocks.length; idx++) { %>
+                    <tr>
+                      <td>
+                        <%= parseInt((idx+1)) %>
+                      </td>
+                      <td>
+                        <% if (parseInt(stocks[idx].IS_OLD_MATERIAL)==1) { %>
+                          OLD
+                          <% } else { %>
+                            NEW
+                          <% } %>
+                      </td>
+                      <td>
+                        <%= stocks[idx].RATE %>
+                      </td>
+                      <td>
+                        <%= stocks[idx].WEIGHT %> grams
+                      </td>
+                      <td>
+                        <%= stocks[idx].PURCHASE_AMT %>
+                      </td>
+                      <td>
+                        <%= stocks[idx].CREATED_ON %>
+                      </td>
+
+                    </tr>
+                    <% } } %>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal fade" id="basicModal" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="card-title">Add In-Stock Details</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="/addstock" method="POST">
+              <div class="modal-body">
+
+                <div class="card">
+                  <div class="card-body">
+
+
+                    <!-- No Labels Form -->
+                    <!-- No Labels Form -->
+                    <div class="row g-3">
+                      <div class="col-md-12">
+                        <div class="input-group mb-3">
+                          <span class="input-group-text">MATERIAL TYPE</span>
+                         <select name="mtype" id="mtype" class="form-select" aria-label="Default select example" required >
+                          <option value="0">NEW</option>
+                          <option value="1">OLD</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-md-12">
+                        <div class="input-group mb-3">
+                          <input type="number" placeholder="Material Weight" class="form-control"
+                            aria-label="Amount (to the nearest dollar)" name="weight" id="weight" required>
+                          <span class="input-group-text">grams</span>
+                        </div>
+                      </div>
+
+                      <div class="col-md-12">
+                        <div class="input-group mb-3">
+                          <span class="input-group-text">Rs</span>
+                          <input type="number" placeholder="Material Amount" class="form-control"
+                            aria-label="Amount (to the nearest dollar)" name="purchaseAmount" id="purchaseAmount"
+                            readonly>
+                        </div>
+                      </div>
+
+
+                    </div><!-- End No Labels Form -->
+
+                  </div>
+                </div>
+
+
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Save changes</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div><!-- End Basic Modal-->
+    </section>
+
+  </main><!-- End #main -->
+  <script>
+    $('#weight').on('input', function (e) {
+      var weight = $("#weight").val();
+      var rate = $("#rate").val();
+      calculateAmount(weight, rate);
+    });
+    $('#rate').on('input', function (e) {
+      var weight = $("#weight").val();
+      var rate = $("#rate").val();
+      calculateAmount(weight, rate);
+    });
+    function calculateAmount(weight, rate) {
+      if (weight == null || weight == undefined) {
+        weight = 0;
+      }
+      if (rate == null || rate == undefined) {
+        rate = 0;
+      }
+      var amount = weight * rate;
+      $("#purchaseAmount").val(amount);
+
+    }
+  </script>
+  <%- include("../partials/_footer") %>
