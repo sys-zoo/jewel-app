@@ -1,12 +1,12 @@
 <%- include("../partials/_header") %>
   <main id="main" class="main">
     <div class="pagetitle">
-      <h1>In-Stock History</h1>
+      <h1>Order Details</h1>
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="/">Home</a></li>
-          <li class="breadcrumb-item"><a href="/viewStock">Stock Overview</a></li>
-          <li class="breadcrumb-item active">In Stock History</li>
+          <li class="breadcrumb-item"><a href="/viewOrder">Order Overview</a></li>
+          <li class="breadcrumb-item active">Order Details</li>
         </ol>
       </nav>
     </div><!-- End Page Title -->
@@ -17,7 +17,7 @@
           <div class="row">
             <div class="col-xxl-12 col-md-12 d-flex justify-content-end">
               <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#basicModal">
-                Add In-Stock
+                Add Order Info
               </button>
             </div>
           </div>
@@ -29,44 +29,48 @@
         <div class="col-lg-12">
           <div class="row">
             <div class="col-xxl-12 col-md-12">
-              <table id="example" class="ui celled table" style="width:100%">
+              <table class="ui celled table" style="width:100%">
                 <thead>
                   <tr>
-                    <th>#</th>
-                    <th>Material Type</th>
-                    <th>Rate</th>
-                    <th>Weight</th>
-                    <th>Amount</th>
-                    <th>Created On</th>
-
+                    <th>Date</th>
+                    <th>Action</th>
+                    <th>Credit Amount</th>
+                    <th>Debit Amount</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <% if(stocks) { for(var idx=0; idx<stocks.length; idx++) { %>
+                  <% if(orderDetails) { for(var idx=0; idx<orderDetails.length; idx++) { %>
                     <tr>
-                      <td>
-                        <%= parseInt((idx+1)) %>
+                       <td>
+                        <%= new Date(orderDetails[idx].CREATED_ON).toJSON().slice(0,10)%>
                       </td>
                       <td>
-                        <% if (parseInt(stocks[idx].IS_OLD_MATERIAL)==1) { %>
-                          OLD
-                          <% } else { %>
-                            NEW
-                          <% } %>
+                        <h3><%= orderDetails[idx].ACTION_TYPE %></h3><br>
+                        <h4><u>Details</u></h4>
+                         <%= orderDetails[idx].CONTENT %><br>
+                         Rate : <%= orderDetails[idx].RATE %><br>
+                         Weight : <%= orderDetails[idx].WEIGHT %> grams <br>
+                         Payment Mode : <br>
+                        <% if(orderDetails[idx].PAYMENT_MODE==0){ %>
+                         None
+                       <% } else if(orderDetails[idx].PAYMENT_MODE==1){ %>
+                         Cash
+                         <% } else if(orderDetails[idx].PAYMENT_MODE==2){ %>
+                          GPay
+                          <% } else if(orderDetails[idx].PAYMENT_MODE==3){ %>
+                           PhonePe
+                        <% } %>   
                       </td>
                       <td>
-                        <%= stocks[idx].RATE %>
+                        <% if(orderDetails[idx].AMOUNT_TYPE==1){ %>
+                            <%= orderDetails[idx].AMOUNT %>
+                        <% } %>    
                       </td>
                       <td>
-                        <%= stocks[idx].WEIGHT %> grams
+                        <% if(orderDetails[idx].AMOUNT_TYPE==2){ %>
+                          <%= orderDetails[idx].AMOUNT %>
+                        <% } %>
                       </td>
-                      <td>
-                        <%= stocks[idx].PURCHASE_AMT %>
-                      </td>
-                      <td>
-                        <%= stocks[idx].CREATED_ON %>
-                      </td>
-
                     </tr>
                     <% } } %>
               </table>
@@ -75,45 +79,78 @@
         </div>
       </div>
       <div class="modal fade" id="basicModal" tabindex="-1">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="card-title">Add In-Stock Details</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="/addstock" method="POST">
+            <form action="/addOrderInfo" method="POST">
               <div class="modal-body">
-
                 <div class="card">
                   <div class="card-body">
-
-
-                    <!-- No Labels Form -->
-                    <!-- No Labels Form -->
                     <div class="row g-3">
                       <div class="col-md-12">
                         <div class="input-group mb-3">
-                          <span class="input-group-text">MATERIAL TYPE</span>
-                         <select name="mtype" id="mtype" class="form-select" aria-label="Default select example" required >
-                          <option value="0">NEW</option>
-                          <option value="1">OLD</option>
+                          <span class="input-group-text">Action Type</span>
+                         <select name="atype" id="atype" class="form-select" aria-label="Default select example" required >
+                          <% if(rowsActionType) { for(var idx=0; idx<rowsActionType.length; idx++) { %>
+                              <option value="<%= rowsActionType[idx].ACTION_TYPE_ID %>"><%= rowsActionType[idx].ACTION_TYPE %></option>
+                          <% } } %>
                           </select>
                         </div>
                       </div>
                       <div class="col-md-12">
                         <div class="input-group mb-3">
-                          <input type="number" placeholder="Material Weight" class="form-control"
-                            aria-label="Amount (to the nearest dollar)" name="weight" id="weight" required>
+                          <textarea placeholder="Content" class="form-control"
+                            aria-label="Amount (to the nearest dollar)" name="content" id="content"
+                            rows="5" cols="255"></textarea>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="input-group mb-3">
+                          <span class="input-group-text">Rs</span>
+                          <input type="number" placeholder="Rate" class="form-control" value="0.0"
+                            aria-label="Amount (to the nearest dollar)" name="rate" id="rate"
+                            >
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="input-group mb-3">
+                          <input type="number" placeholder="Weight" class="form-control" value="0.0"
+                            aria-label="Amount (to the nearest dollar)" name="weight" id="weight">
                           <span class="input-group-text">grams</span>
                         </div>
                       </div>
-
-                      <div class="col-md-12">
+                      <div class="col-md-4">
+                        <div class="input-group mb-3">
+                          <span class="input-group-text">Payment Mode</span>
+                          <select name="paymentMode" id="paymentMode" class="form-select" aria-label="Default select example"
+                            >
+                            <option value="0">None</option>
+                            <option value="1">Cash</option>
+                            <option value="2">GPay</option>
+                            <option value="3">PhonePe</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="input-group mb-3">
+                          <span class="input-group-text">Amount Type</span>
+                          <select name="amountType" id="amountType" class="form-select" aria-label="Default select example"
+                            >
+                            <option value="0">None</option>
+                            <option value="1">Credit</option>
+                            <option value="2">Debit</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-md-4">
                         <div class="input-group mb-3">
                           <span class="input-group-text">Rs</span>
-                          <input type="number" placeholder="Material Amount" class="form-control"
-                            aria-label="Amount (to the nearest dollar)" name="purchaseAmount" id="purchaseAmount"
-                            readonly>
+                          <input type="number" placeholder="Amount" class="form-control" value="0.0"
+                            aria-label="Amount (to the nearest dollar)" name="amount" id="amount"
+                            >
                         </div>
                       </div>
 

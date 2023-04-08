@@ -8,7 +8,7 @@ import {
 var localStorage = new LocalStorage('./data');
 export const addStock = async (req, res) => {
     var isLogin = localStorage.getItem('isLogin');
-    if (isLogin && isLogin == '0') {
+    if (isLogin == undefined || isLogin==null || isLogin == '0') {
         res.redirect('/login?err=Session expired!!!');
         res.end();
     } else {
@@ -39,7 +39,8 @@ export const addStock = async (req, res) => {
 };
 export const viewStock = async (req, res) => {
     var isLogin = localStorage.getItem('isLogin');
-    if (isLogin && isLogin == '0') {
+    console.info(isLogin);
+    if (isLogin == undefined || isLogin==null || isLogin == '0') {
         res.redirect('/login?err=Session expired!!!');
         res.end();
     } else {
@@ -63,7 +64,7 @@ export const viewStock = async (req, res) => {
 };
 export const viewStockHis = async (req, res) => {
     var isLogin = localStorage.getItem('isLogin');
-    if (isLogin && isLogin == '0') {
+    if (isLogin == undefined || isLogin==null || isLogin == '0') {
         res.redirect('/login?err=Session expired!!!');
         res.end();
     } else {

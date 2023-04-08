@@ -18,7 +18,7 @@
               <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#basicModal">
                 Create New Order
               </button>&nbsp;&nbsp;
-             
+
             </div>
           </div>
 
@@ -47,8 +47,7 @@
                     <th>Old Weight</th>
                     <th>Old Amt</th>
                     <th>Order On</th>
-                    <th>Expected On</th>
-                    <th>Delivered On</th>
+               =    <th>Delivered On</th>
                     <th>Status</th>
                   </tr>
                 </thead>
@@ -59,7 +58,7 @@
                         <%= parseInt((idx+1)) %>
                       </td>
                       <td>
-                        <%= stocks[idx].ORDER_NO %>
+                        <a href="vieworderdet?o=<%= stocks[idx].ORDER_NO %>"><%= stocks[idx].ORDER_NO %></a>
                       </td>
                       <td>
                         <%= stocks[idx].NAME %>
@@ -98,13 +97,21 @@
                         <%= stocks[idx].OLD_ITEM_AMT %>
                       </td>
                       <td>
-                        <%= stocks[idx].EXPECTED_ON %>
+                        <%= new Date(stocks[idx].CREATED_ON).toJSON().slice(0,10) %>
                       </td>
                       <td>
-                        <%= stocks[idx].DELIVERED_ON %>
+                        <%= new Date(stocks[idx].DELIVERED_ON).toJSON().slice(0,10)%>
                       </td>
                       <td>
-                        <%= stocks[idx].STATUS %>
+                        <% if(stocks[idx].STATUS==1) { %>
+                          PLACED ORDER
+                          <% } else if(stocks[idx].STATUS==2) { %>
+                            MATERIAL DISPATCHED
+                          <% } else if(stocks[idx].STATUS==3) { %>
+                              ITEM RECEIVED
+                            <% } else if(stocks[idx].STATUS==4) { %>
+                                ITEM DELIVERED
+                                <% } %>
                       </td>
                     </tr>
                     <% } } %>
@@ -114,66 +121,60 @@
         </div>
       </div>
       <div class="modal fade" id="basicModal" tabindex="-1">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-xl">
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="card-title">New Order</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="/addstock" method="POST">
+            <form action="/neworder" method="POST">
               <div class="modal-body">
 
                 <div class="card">
                   <div class="card-body">
                     <!-- No Labels Form -->
                     <div class="row g-3">
-                      <div class="col-md-6">
+                      <div class="col-md-3">
                         <div class="input-group mb-3">
-                          <input type="text" placeholder="Name of the Customer" class="form-control"
-                            aria-label="" name="name" id="name" required>
+                          <input type="text" placeholder="Name of the Customer" class="form-control" aria-label=""
+                            name="name" id="name" required>
                         </div>
+                      </div>
+                      <div class="col-md-3">
+                        <div class="input-group mb-3">
+                          <input placeholder="Customer Mobile Number" class="form-control" aria-label="" maxlength="10"
+                            name="mobile" id="mobile" type="number" maxlength="10" required  oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" >
+                      </div>
                       </div>
                       <div class="col-md-6">
                         <div class="input-group mb-3">
-                          <input type="number" placeholder="Customer Mobile Number" class="form-control"
-                            aria-label="" name="mobile" id="mobile" required>
+                          <input type="text" placeholder="Customer Address" class="form-control" aria-label=""
+                            name="address" id="address" >
                         </div>
                       </div>
-                      <div class="col-md-12">
+                      <div class="col-md-3">
                         <div class="input-group mb-3">
-                          <textarea type="text" placeholder="Name of the Customer" class="form-control"
-                            aria-label="" name="address" id="address" rows="3" cols="255"></textarea>
+                          <input type="text" placeholder="Item Type" class="form-control" aria-label=""
+                            name="itemType" id="itemType" required>
                         </div>
                       </div>
-                      <div class="col-md-6">
-                        <div class="input-group mb-3">
-                          <input type="number" placeholder="Item Type" class="form-control"
-                            aria-label="" name="itemType" id="itemType" required>
-                        </div>
-                      </div>
-                      
-                      <div class="col-md-6">
+
+                      <div class="col-md-3">
                         <div class="input-group mb-3">
                           <span class="input-group-text">Rs</span>
-                          <input type="number" placeholder="Material Rate" class="form-control"
-                            aria-label="Amount (to the nearest dollar)" name="rate" id="rate" required>
+                          <input type="text" placeholder="Material Rate" class="form-control"
+                            aria-label="Rate" name="rate" id="rate">
                         </div>
                       </div>
-                      <div class="col-md-6">
+                      <div class="col-md-3">
                         <div class="input-group mb-3">
-                          <input type="number" placeholder="Material Weight" class="form-control"
+                          <input type="text" placeholder="Material Weight" class="form-control"
                             aria-label="Amount (to the nearest dollar)" name="weight" id="weight" required>
                           <span class="input-group-text">grams</span>
                         </div>
                       </div>
-                      <div class="col-md-6">
-                        <div class="input-group mb-3">
-                          <span class="input-group-text">Rs</span>
-                          <input type="number" placeholder="Material Rate" class="form-control"
-                            aria-label="Amount (to the nearest dollar)" name="rate" id="rate" required>
-                        </div>
-                      </div>
-                      <div class="col-md-12">
+                    
+                      <div class="col-md-3">
                         <div class="input-group mb-3">
                           <span class="input-group-text">Rs</span>
                           <input type="number" placeholder="Material Amount" class="form-control"
@@ -181,8 +182,73 @@
                             readonly>
                         </div>
                       </div>
-
-
+                      
+                      <div class="col-md-3">
+                        <div class="input-group mb-3">
+                          <input type="text" placeholder="Old Item Type" class="form-control" aria-label=""
+                            name="olditemType" id="olditemType" value="0.0">
+                        </div>
+                      </div>
+                      <div class="col-md-3">
+                        <div class="input-group mb-3">
+                          <span class="input-group-text">Rs</span>
+                          <input type="text" placeholder="Material Rate" class="form-control"
+                            aria-label="Amount (to the nearest dollar)" name="oldRate" id="oldRate" value="0.0">
+                        </div>
+                      </div>
+                      <div class="col-md-3">
+                        <div class="input-group mb-3">
+                          <input type="text" placeholder="Material Weight" class="form-control"
+                            aria-label="Amount (to the nearest dollar)" name="oldWeight" id="oldWeight" value="0.0">
+                          <span class="input-group-text">grams</span>
+                        </div>
+                      </div>
+                      <div class="col-md-3">
+                        <div class="input-group mb-3">
+                          <span class="input-group-text">Rs</span>
+                          <input type="text" placeholder="Old Material Amount" class="form-control"
+                            aria-label="Amount (to the nearest dollar)" name="oldItemAmount" id="oldItemAmount" value="0.0" readonly>
+                        </div>
+                      </div>
+                      <div class="col-md-3">
+                        <div class="input-group mb-3">
+                          <span class="input-group-text">Delivered Date</span>
+                          <input type="date" placeholder="Material Amount" class="form-control"
+                            aria-label="Amount (to the nearest dollar)" name="deliveredDate" id="deliveredDate" >
+                        </div>
+                      </div>
+                      <div class="col-md-3">
+                        <div class="input-group mb-3">
+                          <span class="input-group-text">Rs</span>
+                          <input type="number" placeholder="Advance Amount" class="form-control"
+                            aria-label="Amount (to the nearest dollar)" name="advanceAmount" id="advanceAmount" value="0.0"
+                            >
+                        </div>
+                      </div>
+                      <div class="col-md-3">
+                        <div class="input-group mb-3">
+                          <span class="input-group-text">Payment Mode</span>
+                          <select name="paymentMode" id="paymentMode" class="form-select" aria-label="Default select example"
+                            required>
+                            <option value="0">None</option>
+                            <option value="1">Cash</option>
+                            <option value="2">GPay</option>
+                            <option value="3">PhonePe</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-md-3">
+                        <div class="input-group mb-3">
+                          <span class="input-group-text">Balance</span>
+                          <input type="text" placeholder="Balance Amount" class="form-control"
+                            aria-label="Amount (to the nearest dollar)" name="balanceAmount" id="balanceAmount" value="0.0" readonly>
+                        </div>
+                      </div>
+                      <div class="col-md-3">
+                        <div class="input-group mb-3">
+                          &nbsp;
+                        </div>
+                      </div>
                     </div><!-- End No Labels Form -->
 
                   </div>
@@ -202,16 +268,51 @@
 
   </main><!-- End #main -->
   <script>
+    // $('#deliveredDate').val(new Date().toJSON().slice(0, 10));
+    var now = new Date();
+    var day = ("0" + now.getDate()).slice(-2);
+    var month = ("0" + (now.getMonth() + 1)).slice(-2);
+    var today = now.getFullYear()+"-"+(month)+"-"+(day) ;
+    $('#deliveredDate').val(today);
+    
     $('#weight').on('input', function (e) {
       var weight = $("#weight").val();
       var rate = $("#rate").val();
-      calculateAmount(weight, rate);
+      $("#purchaseAmount").val(calculateAmount(weight, rate));
+      calculateBalanceAmount();
     });
     $('#rate').on('input', function (e) {
       var weight = $("#weight").val();
       var rate = $("#rate").val();
-      calculateAmount(weight, rate);
+      $("#purchaseAmount").val(calculateAmount(weight, rate));
+      calculateBalanceAmount();
     });
+    $('#oldWeight').on('input', function (e) {
+      var weight = $("#oldWeight").val();
+      var rate = $("#oldRate").val();
+      $("#oldItemAmount").val(calculateAmount(weight, rate));
+      calculateBalanceAmount();
+    });
+    $('#oldRate').on('input', function (e) {
+      var weight = $("#oldWeight").val();
+      var rate = $("#oldRate").val();
+      $("#oldItemAmount").val(calculateAmount(weight, rate));
+      calculateBalanceAmount();
+    });
+    $('#advanceAmount').on('input', function (e) {
+      calculateBalanceAmount();
+    });
+    function calculateBalanceAmount() {
+      var purchaseAmount = isNull($("#purchaseAmount").val());
+      var oldItemAmount = isNull($("#oldItemAmount").val());
+      var advanceAmount = isNull($("#advanceAmount").val());
+      var balanceAmount = (parseFloat(purchaseAmount) - parseFloat(oldItemAmount)) - parseFloat(advanceAmount);
+      console.info(balanceAmount);
+      if(balanceAmount == undefined || balanceAmount == '' || balanceAmount == NaN){
+        balanceAmount = 0;
+      }
+      $("#balanceAmount").val(parseFloat(balanceAmount).toFixed(2));
+    }
     function calculateAmount(weight, rate) {
       if (weight == null || weight == undefined) {
         weight = 0;
@@ -220,8 +321,10 @@
         rate = 0;
       }
       var amount = weight * rate;
-      $("#purchaseAmount").val(amount);
-
-    }
+      return parseFloat(amount).toFixed(2);
+   }
+   function isNull(value){
+     return (value == null || value == undefined || value == NaN || value == '')?0:value;
+   }
   </script>
   <%- include("../partials/_footer") %>

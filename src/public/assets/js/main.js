@@ -1,9 +1,4 @@
-/**
-* Template Name: NiceAdmin - v2.5.0
-* Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
-* Author: BootstrapMade.com
-* License: https://bootstrapmade.com/license/
-*/
+
 (function() {
   "use strict";
 
@@ -200,20 +195,20 @@
     image_advtab: true,
     link_list: [{
         title: 'My page 1',
-        value: 'https://www.tiny.cloud'
+        value: 'https://www.syszoo.com'
       },
       {
         title: 'My page 2',
-        value: 'http://www.moxiecode.com'
+        value: 'http://www.syszoo.com'
       }
     ],
     image_list: [{
         title: 'My page 1',
-        value: 'https://www.tiny.cloud'
+        value: 'https://www.syszoo.com'
       },
       {
         title: 'My page 2',
-        value: 'http://www.moxiecode.com'
+        value: 'http://www.syszoo.com'
       }
     ],
     image_class_list: [{

@@ -15,11 +15,12 @@ th {
   white-space: nowrap;
   background-color: #198754 !important;
   color: #ffffff   !important;
+  white-space: nowrap !important;
 }
 
 td {
-  white-space: nowrap;
- 
+  white-space: nowrap !important;
+  vertical-align: top !important;
 }
 
 
