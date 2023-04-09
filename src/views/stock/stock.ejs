@@ -1,7 +1,7 @@
 <%- include("../partials/_header") %>
   <main id="main" class="main">
     <div class="pagetitle">
-      <h1>Stock Overview</h1>
+      <h1><i class="bi bi-bank"></i>&nbsp;Stock Overview</h1>
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="/">Home</a></li>
@@ -16,7 +16,7 @@
           <div class="row">
             <div class="col-xxl-12 col-md-12 d-flex justify-content-end">
               <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#basicModal">
-                Add In-Stock
+                <i class="bi bi-shield-plus"></i>&nbsp;Add In-Stock
               </button>&nbsp;&nbsp;
              
             </div>
@@ -34,7 +34,6 @@
                   <tr>
                     <th>#</th>
                     <th>Instock Weight</th>
-                    <th>Old Instock Weight</th>
                     <th>Outstock Weight</th>
                     <th>Sales Weight</th>
                     <th>Shop Weight</th>
@@ -49,9 +48,6 @@
                       </td>
                       <td>
                         <%= stocks[idx].INSTOCK_WEIGHT %> grams <a href="viewStockHis"><i class="fa fa-external-link"></i>View</a>
-                      </td>
-                      <td>
-                        <%= stocks[idx].OLD_INSTOCK_WEIGHT %> grams <a href="viewStockHis"><i class="fa fa-external-link"></i>View</a>
                       </td>
                       <td>
                         <%= stocks[idx].OUTSTOCK_WEIGHT %> grams
@@ -85,7 +81,7 @@
 
                     <!-- No Labels Form -->
                     <div class="row g-3">
-                      <div class="col-md-6">
+                      <!-- <div class="col-md-6">
                         <div class="input-group mb-3">
                           <span class="input-group-text">MATERIAL TYPE</span>
                          <select name="mtype" id="mtype" class="form-select" aria-label="Default select example" required >
@@ -93,7 +89,7 @@
                           <option value="1">OLD</option>
                           </select>
                         </div>
-                      </div>
+                      </div> -->
                       <div class="col-md-6">
                         <div class="input-group mb-3">
                           <span class="input-group-text">Rs</span>

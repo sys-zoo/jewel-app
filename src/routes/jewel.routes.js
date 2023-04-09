@@ -4,7 +4,7 @@ import { addStock, viewStock, viewStockHis } from "../controllers/StockControlle
 import { addOrder, addOrderInfo, viewOrder, viewOrderDetails } from "../controllers/OrderController.js";
 const router = Router();
 
-router.get("/", viewStock);
+router.get("/", viewOrder);
 router.get("/viewStock", viewStock);
 router.get("/viewStockHis", viewStockHis);
 router.get("/login", renderLogin);

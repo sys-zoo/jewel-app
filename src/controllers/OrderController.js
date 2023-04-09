@@ -18,8 +18,8 @@ export const addOrder = async (req, res) => {
             var orderNumber = new Date().getTime();
             var request = req.body;
             if (request) {
-                var sql = "INSERT INTO JWL_ORDER (ORDER_NO,NAME,MOBILE,ADDRESS,ITEM_TYPE,RATE,WEIGHT,PURCHASE_AMT,ADVANCE_AMT,OLD_ITEM_TYPE,OLD_RATE,OLD_WEIGHT,OLD_ITEM_AMT,DELIVERED_ON) VALUES ?";
-                var values = [[orderNumber,request.name,request.mobile,request.address,request.itemType,request.rate,request.weight,request.purchaseAmount,request.advanceAmount,request.oldItemType,request.oldRate,request.oldWeight,request.oldItemAmount,request.deliveredDate]];
+                var sql = "INSERT INTO JWL_ORDER (ORDER_NO,ORDER_TYPE,NAME,MOBILE,ADDRESS,ITEM_TYPE,RATE,WEIGHT,PURCHASE_AMT,ADVANCE_AMT,OLD_ITEM_TYPE,OLD_RATE,OLD_WEIGHT,OLD_ITEM_AMT,DELIVERED_ON) VALUES ?";
+                var values = [[orderNumber,request.orderType,request.name,request.mobile,request.address,request.itemType,request.rate,request.weight,request.purchaseAmount,request.advanceAmount,request.oldItemType,request.oldRate,request.oldWeight,request.oldItemAmount,request.deliveredDate]];
                 const [status] = await pool.query(sql, [values], function (err, result) {
                     if (err) throw err;
                     return result.affectedRows;
@@ -83,20 +83,25 @@ export const viewOrderDetails = async (req, res) => {
         var userInfo = localStorage.getItem('userInfo');
         var userInfoData = JSON.parse(userInfo);
         try {
-            const [rowsOrderPId] = await pool.query('SELECT ORDER_ID FROM JWL_ORDER WHERE ORDER_NO =?', [orderNumber], (err, rows) => {
+            const [rowsOrder] = await pool.query('SELECT * FROM JWL_ORDER WHERE ORDER_NO =?', [orderNumber], (err, rows) => {
                 return rows;
             });
-            var orderPId = rowsOrderPId[0].ORDER_ID;
+            var orderPId = rowsOrder[0].ORDER_ID;
             const [rows] = await pool.query('SELECT * FROM JWL_ORDER_TRACK o join JWL_ACTION_TYPE at on o.ACTION_TYPE_ID=at.ACTION_TYPE_ID where o.ORDER_ID=?', [orderPId], (err, rows) => {
                 return rows;
             });
             const [rowsActionType] = await pool.query('SELECT * FROM JWL_ACTION_TYPE', [], (err, rows) => {
                 return rows;
             });
+            const [rowsStock] = await pool.query('SELECT * FROM JWL_STOCK', [], (err, rows) => {
+                return rows;
+            });
             localStorage.setItem('currentNumber', orderNumber);
             localStorage.setItem('currentOrderId', orderPId);
             res.render("order/orderView", {
+                order : rowsOrder,
                 orderDetails: rows,
+                stock : rowsStock,
                 rowsActionType : rowsActionType,
                 rowCount: 0,
                 userInfoData: userInfoData,

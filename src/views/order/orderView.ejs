@@ -1,7 +1,7 @@
 <%- include("../partials/_header") %>
   <main id="main" class="main">
     <div class="pagetitle">
-      <h1>Order Details</h1>
+      <h1><i class="bi bi-inboxes-fill"></i>&nbsp;Order Details</h1>
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="/">Home</a></li>
@@ -15,9 +15,25 @@
       <div class="row">
         <div class="col-lg-12">
           <div class="row">
-            <div class="col-xxl-12 col-md-12 d-flex justify-content-end">
+            <div class="col-xxl-10 col-md-10 d-flex justify-content-start border-1">
+              <% if(stock) { for(var idx=0; idx<stock.length; idx++) { %>
+                <button type="button" class="btn btn-light mb-2">
+                  Instock <span class="badge bg-secondary text-light"><%= stock[idx].INSTOCK_WEIGHT %></span>
+                </button>
+                <button type="button" class="btn btn-light mb-2">
+                  Outstock <span class="badge bg-secondary text-light"><%= stock[idx].OUTSTOCK_WEIGHT %></span>
+                </button>
+                <button type="button" class="btn btn-light mb-2">
+                  Sales <span class="badge bg-secondary text-light"><%= stock[idx].SALES_WEIGHT %></span>
+                </button>
+                <button type="button" class="btn btn-light mb-2">
+                  Shop <span class="badge bg-secondary text-light"><%= stock[idx].SHOP_ITEM_WEIGHT %></span>
+                </button>
+              <% } } %>
+            </div>
+            <div class="col-xxl-2 col-md-2 d-flex justify-content-end">
               <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#basicModal">
-                Add Order Info
+                <i class="bi bi-plus-circle"></i>&nbsp;Add Order Info
               </button>
             </div>
           </div>
@@ -25,7 +41,7 @@
         </div>
       </div>
       <hr>
-      <div class="row">
+      <div class="row" style="overflow-y: auto; max-height: 50%;height: 50%">
         <div class="col-lg-12">
           <div class="row">
             <div class="col-xxl-12 col-md-12">
@@ -34,42 +50,82 @@
                   <tr>
                     <th>Date</th>
                     <th>Action</th>
-                    <th>Credit Amount</th>
-                    <th>Debit Amount</th>
-                  </tr>
+                    <th>Sent (Grams)</th>
+                    <th>Received (Grams)</th>
+                    <th>Credit Amount (Rs)</th>
+                    <th>Debit Amount (Rs)</th>
+                 </tr>
                 </thead>
                 <tbody>
                   <% if(orderDetails) { for(var idx=0; idx<orderDetails.length; idx++) { %>
                     <tr>
-                       <td>
+                      <td>
                         <%= new Date(orderDetails[idx].CREATED_ON).toJSON().slice(0,10)%>
                       </td>
                       <td>
-                        <h3><%= orderDetails[idx].ACTION_TYPE %></h3><br>
-                        <h4><u>Details</u></h4>
-                         <%= orderDetails[idx].CONTENT %><br>
-                         Rate : <%= orderDetails[idx].RATE %><br>
-                         Weight : <%= orderDetails[idx].WEIGHT %> grams <br>
-                         Payment Mode : <br>
-                        <% if(orderDetails[idx].PAYMENT_MODE==0){ %>
-                         None
-                       <% } else if(orderDetails[idx].PAYMENT_MODE==1){ %>
-                         Cash
-                         <% } else if(orderDetails[idx].PAYMENT_MODE==2){ %>
-                          GPay
-                          <% } else if(orderDetails[idx].PAYMENT_MODE==3){ %>
-                           PhonePe
-                        <% } %>   
-                      </td>
-                      <td>
-                        <% if(orderDetails[idx].AMOUNT_TYPE==1){ %>
-                            <%= orderDetails[idx].AMOUNT %>
-                        <% } %>    
-                      </td>
-                      <td>
-                        <% if(orderDetails[idx].AMOUNT_TYPE==2){ %>
-                          <%= orderDetails[idx].AMOUNT %>
+                        <% if(orderDetails[idx].ACTION_TYPE_ID==1) { %>
+                        <h3><i class="bi bi-bag-check-fill"></i>&nbsp;
+                        <% } else if(orderDetails[idx].ACTION_TYPE_ID==2) { %>
+                        <h3><i class="bi bi-cash-coin"></i>&nbsp;
+                        <% } else if(orderDetails[idx].ACTION_TYPE_ID==3) { %>
+                        <h3><i class="bi bi-arrow-right-square-fill"></i>&nbsp;
+                        <% } else if(orderDetails[idx].ACTION_TYPE_ID==4) { %>
+                        <h3><i class="bi bi-arrow-left-square-fill"></i>&nbsp;
+                        <% } else if(orderDetails[idx].ACTION_TYPE_ID==5) { %>
+                        <h3><i class="bi bi-cash-stack"></i>&nbsp;
+                        <% } else if(orderDetails[idx].ACTION_TYPE_ID==6) { %>
+                        <h3><i class="bi bi-cash-coin"></i>&nbsp;
+                        <% } else if(orderDetails[idx].ACTION_TYPE_ID==7) { %>
+                        <h3><i class="bi bi-stop-circle-fill text-danger"></i>&nbsp;
+                        <% } else if(orderDetails[idx].ACTION_TYPE_ID==8) { %>
+                        <h3><i class="bi bi-x-circle-fill text-danger"></i>&nbsp;
                         <% } %>
+                        <%= orderDetails[idx].ACTION_TYPE %>
+                        </h3>
+
+                        <% if(orderDetails[idx].ACTION_TYPE_ID!=7 &&
+                        orderDetails[idx].ACTION_TYPE_ID!=8) { %>
+                        <h4><u>Details</u></h4>
+                        <% } %>
+                        <%= orderDetails[idx].CONTENT %><br>
+                        <% if(orderDetails[idx].ACTION_TYPE_ID==1 ||
+                        orderDetails[idx].ACTION_TYPE_ID==3 ||
+                        orderDetails[idx].ACTION_TYPE_ID==4){ %>
+                        Rate : <%= orderDetails[idx].RATE %><br>
+                        Weight : <%= orderDetails[idx].WEIGHT %> grams <br>
+                        <% } %>
+                        <% if(orderDetails[idx].PAYMENT_MODE==0){ %>
+
+                        <% } else if(orderDetails[idx].PAYMENT_MODE==1){
+                        %>
+                        Payment Mode : Cash
+                        <% } else if(orderDetails[idx].PAYMENT_MODE==2){
+                        %>
+                        Payment Mode : GPay
+                        <% } else
+                        if(orderDetails[idx].PAYMENT_MODE==3){ %>
+                        Payment Mode : PhonePe
+                        <% } %>
+                      </td>
+                      <td>
+                        <% if(orderDetails[idx].ACTION_TYPE_ID==3){ %>
+                          <%= orderDetails[idx].WEIGHT %> grams <br>
+                            <% } %>
+                      </td>
+                      <td>
+                        <% if(orderDetails[idx].ACTION_TYPE_ID==4){ %>
+                          <%= orderDetails[idx].WEIGHT %> grams <br>
+                            <% } %>
+                      </td>
+                      <td>
+                        <% if(orderDetails[idx].AMOUNT_TYPE==1 && orderDetails[idx].ACTION_TYPE_ID!=1){ %>
+                          Rs.<%= orderDetails[idx].AMOUNT %>
+                            <% } %>
+                      </td>
+                      <td>
+                        <% if(orderDetails[idx].AMOUNT_TYPE==2 && orderDetails[idx].ACTION_TYPE_ID!=1){ %>
+                          Rs.<%= orderDetails[idx].AMOUNT %>
+                            <% } %>
                       </td>
                     </tr>
                     <% } } %>
@@ -82,7 +138,7 @@
         <div class="modal-dialog modal-lg">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="card-title">Add In-Stock Details</h5>
+              <h5 class="card-title">Add Order Details</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form action="/addOrderInfo" method="POST">
@@ -93,26 +149,28 @@
                       <div class="col-md-12">
                         <div class="input-group mb-3">
                           <span class="input-group-text">Action Type</span>
-                         <select name="atype" id="atype" class="form-select" aria-label="Default select example" required >
-                          <% if(rowsActionType) { for(var idx=0; idx<rowsActionType.length; idx++) { %>
-                              <option value="<%= rowsActionType[idx].ACTION_TYPE_ID %>"><%= rowsActionType[idx].ACTION_TYPE %></option>
-                          <% } } %>
+                          <select name="atype" id="atype" class="form-select" aria-label="Default select example"
+                            required>
+                            <% if(rowsActionType) { for(var idx=1; idx<rowsActionType.length; idx++) { %>
+                              <option value="<%= rowsActionType[idx].ACTION_TYPE_ID %>">
+                                <%= rowsActionType[idx].ACTION_TYPE %>
+                              </option>
+                              <% } } %>
                           </select>
                         </div>
                       </div>
                       <div class="col-md-12">
                         <div class="input-group mb-3">
                           <textarea placeholder="Content" class="form-control"
-                            aria-label="Amount (to the nearest dollar)" name="content" id="content"
-                            rows="5" cols="255"></textarea>
+                            aria-label="Amount (to the nearest dollar)" name="content" id="content" rows="5"
+                            cols="255"></textarea>
                         </div>
                       </div>
                       <div class="col-md-6">
                         <div class="input-group mb-3">
                           <span class="input-group-text">Rs</span>
                           <input type="number" placeholder="Rate" class="form-control" value="0.0"
-                            aria-label="Amount (to the nearest dollar)" name="rate" id="rate"
-                            >
+                            aria-label="Amount (to the nearest dollar)" name="rate" id="rate">
                         </div>
                       </div>
                       <div class="col-md-6">
@@ -125,8 +183,8 @@
                       <div class="col-md-4">
                         <div class="input-group mb-3">
                           <span class="input-group-text">Payment Mode</span>
-                          <select name="paymentMode" id="paymentMode" class="form-select" aria-label="Default select example"
-                            >
+                          <select name="paymentMode" id="paymentMode" class="form-select"
+                            aria-label="Default select example">
                             <option value="0">None</option>
                             <option value="1">Cash</option>
                             <option value="2">GPay</option>
@@ -137,8 +195,8 @@
                       <div class="col-md-4">
                         <div class="input-group mb-3">
                           <span class="input-group-text">Amount Type</span>
-                          <select name="amountType" id="amountType" class="form-select" aria-label="Default select example"
-                            >
+                          <select name="amountType" id="amountType" class="form-select"
+                            aria-label="Default select example">
                             <option value="0">None</option>
                             <option value="1">Credit</option>
                             <option value="2">Debit</option>
@@ -149,8 +207,7 @@
                         <div class="input-group mb-3">
                           <span class="input-group-text">Rs</span>
                           <input type="number" placeholder="Amount" class="form-control" value="0.0"
-                            aria-label="Amount (to the nearest dollar)" name="amount" id="amount"
-                            >
+                            aria-label="Amount (to the nearest dollar)" name="amount" id="amount">
                         </div>
                       </div>
 

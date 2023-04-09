@@ -1,7 +1,7 @@
 <%- include("../partials/_header") %>
   <main id="main" class="main">
     <div class="pagetitle">
-      <h1>Order Overview</h1>
+      <h1><i class="bi bi-bag-check-fill"></i>&nbsp;Order Overview</h1>
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="/">Home</a></li>
@@ -15,8 +15,8 @@
         <div class="col-lg-12">
           <div class="row">
             <div class="col-xxl-12 col-md-12 d-flex justify-content-end">
-              <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#basicModal">
-                Create New Order
+              <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#basicModal">
+                <i class="bi bi-bag-plus"></i>&nbsp;Create New Order
               </button>&nbsp;&nbsp;
 
             </div>
@@ -47,8 +47,9 @@
                     <th>Old Weight</th>
                     <th>Old Amt</th>
                     <th>Order On</th>
-               =    <th>Delivered On</th>
+                    <th>Delivered On</th>
                     <th>Status</th>
+                    <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -104,14 +105,26 @@
                       </td>
                       <td>
                         <% if(stocks[idx].STATUS==1) { %>
-                          PLACED ORDER
+                             ORDER PLACED
                           <% } else if(stocks[idx].STATUS==2) { %>
-                            MATERIAL DISPATCHED
+                             MATERIAL DISPATCHED
                           <% } else if(stocks[idx].STATUS==3) { %>
-                              ITEM RECEIVED
-                            <% } else if(stocks[idx].STATUS==4) { %>
-                                ITEM DELIVERED
-                                <% } %>
+                             ITEM RECEIVED
+                          
+                          <% } else if(stocks[idx].STATUS==4) { %>
+                             ITEM DELIVERED
+                          <% } else if(stocks[idx].STATUS==5) { %>
+                             ORDER HOLD
+                          <% } else if(stocks[idx].STATUS==6) { %>
+                             ORDER CANCELLED
+                          <% } %>
+                      </td>
+                      <td>
+                        <% if(stocks[idx].STATUS==3) { %>
+                          <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#basicModal">
+                           <i class="bi bi-record-fill"></i>&nbsp;Deliver To Customer
+                         </button>&nbsp;&nbsp;
+                         <% } %>
                       </td>
                     </tr>
                     <% } } %>
@@ -130,23 +143,33 @@
             <form action="/neworder" method="POST">
               <div class="modal-body">
 
-                <div class="card">
+                <div class="card border-0 shadow-none">
+                  
                   <div class="card-body">
                     <!-- No Labels Form -->
                     <div class="row g-3">
+                      <div class="col-md-2">
+                        <div class="input-group mb-3">
+                          <select name="orderType" id="orderType" class="form-select" aria-label="Default select example"
+                            required>
+                            <option value="0">PURCHASE ORDER</option>
+                            <option value="1">SHOP ORDER</option>
+                          </select>
+                        </div>
+                      </div>
                       <div class="col-md-3">
                         <div class="input-group mb-3">
                           <input type="text" placeholder="Name of the Customer" class="form-control" aria-label=""
                             name="name" id="name" required>
                         </div>
                       </div>
-                      <div class="col-md-3">
+                      <div class="col-md-2">
                         <div class="input-group mb-3">
-                          <input placeholder="Customer Mobile Number" class="form-control" aria-label="" maxlength="10"
+                          <input placeholder="Mobile Number" class="form-control" aria-label="" maxlength="10"
                             name="mobile" id="mobile" type="number" maxlength="10" required  oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" >
                       </div>
                       </div>
-                      <div class="col-md-6">
+                      <div class="col-md-5">
                         <div class="input-group mb-3">
                           <input type="text" placeholder="Customer Address" class="form-control" aria-label=""
                             name="address" id="address" >
@@ -244,11 +267,7 @@
                             aria-label="Amount (to the nearest dollar)" name="balanceAmount" id="balanceAmount" value="0.0" readonly>
                         </div>
                       </div>
-                      <div class="col-md-3">
-                        <div class="input-group mb-3">
-                          &nbsp;
-                        </div>
-                      </div>
+                     
                     </div><!-- End No Labels Form -->
 
                   </div>

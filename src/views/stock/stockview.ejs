@@ -33,7 +33,7 @@
                 <thead>
                   <tr>
                     <th>#</th>
-                    <th>Material Type</th>
+                    <!-- <th>Material Type</th> -->
                     <th>Rate</th>
                     <th>Weight</th>
                     <th>Amount</th>
@@ -47,13 +47,13 @@
                       <td>
                         <%= parseInt((idx+1)) %>
                       </td>
-                      <td>
+                      <!-- <td>
                         <% if (parseInt(stocks[idx].IS_OLD_MATERIAL)==1) { %>
                           OLD
                           <% } else { %>
                             NEW
                           <% } %>
-                      </td>
+                      </td> -->
                       <td>
                         <%= stocks[idx].RATE %>
                       </td>
@@ -64,7 +64,7 @@
                         <%= stocks[idx].PURCHASE_AMT %>
                       </td>
                       <td>
-                        <%= stocks[idx].CREATED_ON %>
+                        <%= new Date(stocks[idx].CREATED_ON).toJSON().slice(0,10)%>
                       </td>
 
                     </tr>
