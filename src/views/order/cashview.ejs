@@ -32,20 +32,12 @@
               <table id="example" class="ui celled table" style="width:100%">
                 <thead>
                   <tr>
-                    <th>#</th>
                     <th>Order #</th>
                     <th>Name</th>
-                    <th>Mobile</th>
-                    <th>Address</th>
                     <th>Item Type</th>
                     <th>Rate</th>
                     <th>Weight</th>
                     <th>Purchase Amt</th>
-                    <th>Advance Amt</th>
-                    <th>Old Item Type</th>
-                    <th>Old Rate</th>
-                    <th>Old Weight</th>
-                    <th>Old Amt</th>
                     <th>Order On</th>
                     <th>Delivered On</th>
                     <th>Status</th>
@@ -55,20 +47,12 @@
                 <tbody>
                   <% if(stocks) { for(var idx=0; idx<stocks.length; idx++) { %>
                     <tr>
-                      <td>
-                        <%= parseInt((idx+1)) %>
-                      </td>
-                      <td>
+                     <td>
                         <a href="vieworderdet?o=<%= stocks[idx].ORDER_NO %>"><%= stocks[idx].ORDER_NO %></a>
                       </td>
                       <td>
                         <%= stocks[idx].NAME %>
-                      </td>
-                      <td>
                         <%= stocks[idx].MOBILE %>
-                      </td>
-                      <td>
-                        <%= stocks[idx].ADDRESS %>
                       </td>
                       <td>
                         <%= stocks[idx].ITEM_TYPE %>
@@ -83,21 +67,6 @@
                         <%= stocks[idx].PURCHASE_AMT %>
                       </td>
                       <td>
-                        <%= stocks[idx].ADVANCE_AMT %>
-                      </td>
-                      <td>
-                        <%= stocks[idx].ITEM_TYPE %>
-                      </td>
-                      <td>
-                        <%= stocks[idx].OLD_RATE %>
-                      </td>
-                      <td>
-                        <%= stocks[idx].OLD_WEIGHT %>
-                      </td>
-                      <td>
-                        <%= stocks[idx].OLD_ITEM_AMT %>
-                      </td>
-                      <td>
                         <%= new Date(stocks[idx].CREATED_ON).toJSON().slice(0,10) %>
                       </td>
                       <td>
@@ -105,20 +74,19 @@
                       </td>
                       <td>
                         <% if(stocks[idx].STATUS==1) { %>
-                          ORDER PLACED
-                       <% } else if(stocks[idx].STATUS==2) { %>
-                          ORDER ASSIGNED TO GOLDSMITH
-                       <% } else if(stocks[idx].STATUS==3) { %>
-                          ITEM RECEIVED
-                       <% } else if(stocks[idx].STATUS==4) { %>
-                          ITEM DELIVERED
-                       <% } else if(stocks[idx].STATUS==5) { %>
-                          ORDER COMPLETED
-                       <% } else if(stocks[idx].STATUS==6) { %>
-                          ORDER HOLD
-                       <% } else if(stocks[idx].STATUS==7) { %>
-                          ORDER CANCELLED
-                       <% } %>
+                             ORDER PLACED
+                          <% } else if(stocks[idx].STATUS==2) { %>
+                             MATERIAL DISPATCHED
+                          <% } else if(stocks[idx].STATUS==3) { %>
+                             ITEM RECEIVED
+                          
+                          <% } else if(stocks[idx].STATUS==4) { %>
+                             ITEM DELIVERED
+                          <% } else if(stocks[idx].STATUS==5) { %>
+                             ORDER HOLD
+                          <% } else if(stocks[idx].STATUS==6) { %>
+                             ORDER CANCELLED
+                          <% } %>
                       </td>
                       <td>
                         <% if(stocks[idx].STATUS==3) { %>

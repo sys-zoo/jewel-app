@@ -12,16 +12,18 @@
 
     <section class="section dashboard">
       <div class="row">
-        <div class="col-lg-12">
-          <div class="row">
-            <div class="col-xxl-12 col-md-12 d-flex justify-content-end">
-              <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#basicModal">
-                <i class="bi bi-shield-plus"></i>&nbsp;Add In-Stock
-              </button>&nbsp;&nbsp;
-             
-            </div>
-          </div>
+        <div class="col-xxl-12 col-md-8 d-flex justify-content-start">
+          <h4 class="text-danger"> <i class="bi bi-x-circle"></i> &nbsp;<%= status %>
+          </h4>
+        </div>
+        <div class="col-xxl-12 col-md-4 d-flex justify-content-end">
 
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addgoldsmithModal">
+            <i class="bi bi-person-plus-fill"></i>&nbsp;Add Gold Smith
+          </button>&nbsp;&nbsp;
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#basicModal">
+            <i class="bi bi-shield-plus"></i>&nbsp;Add In-Stock
+          </button>&nbsp;&nbsp;
         </div>
       </div>
       <hr>
@@ -35,9 +37,7 @@
                     <th>#</th>
                     <th>Instock Weight</th>
                     <th>Outstock Weight</th>
-                    <th>Sales Weight</th>
-                    <th>Shop Weight</th>
-                 
+                    <th>Received Weight</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -47,17 +47,18 @@
                         <%= parseInt((idx+1)) %>
                       </td>
                       <td>
-                        <%= stocks[idx].INSTOCK_WEIGHT %> grams <a href="viewStockHis"><i class="fa fa-external-link"></i>View</a>
+                        <%= stocks[idx].INSTOCK_WEIGHT %> grams <a href="viewStockHis?st=1"><i
+                              class="fa fa-external-link"></i>View</a>
                       </td>
                       <td>
-                        <%= stocks[idx].OUTSTOCK_WEIGHT %> grams
+                        <%= stocks[idx].OUTSTOCK_WEIGHT %> grams <a href="viewgoldstockhis?st=2"><i
+                              class="fa fa-external-link"></i>View</a>
                       </td>
                       <td>
-                        <%= stocks[idx].SALES_WEIGHT %> grams
+                        <%= stocks[idx].RECEIVED_WEIGHT %> grams <a href="viewgoldstockhis?st=3"><i
+                              class="fa fa-external-link"></i>View</a>
                       </td>
-                      <td>
-                        <%= stocks[idx].SHOP_ITEM_WEIGHT %> grams
-                      </td>
+
                     </tr>
                     <% } } %>
               </table>
@@ -81,41 +82,56 @@
 
                     <!-- No Labels Form -->
                     <div class="row g-3">
-                      <!-- <div class="col-md-6">
+                      <div class="col-md-3">
+                        <h4>Stock Type</h4>
+                      </div>
+                      <div class="col-md-9">
                         <div class="input-group mb-3">
-                          <span class="input-group-text">MATERIAL TYPE</span>
-                         <select name="mtype" id="mtype" class="form-select" aria-label="Default select example" required >
-                          <option value="0">NEW</option>
-                          <option value="1">OLD</option>
+                          <select name="stockType" id="stockType" class="form-select"
+                            aria-label="Default select example" required>
+                            <option value="1">In Stock</option>
+                            <option value="2">Out Stock (Gold Smith)</option>
+                            <option value="3">Received Stock (Gold Smith)</option>
                           </select>
                         </div>
-                      </div> -->
-                      <div class="col-md-6">
-                        <div class="input-group mb-3">
-                          <span class="input-group-text">Rs</span>
-                          <input type="number" placeholder="Material Rate" class="form-control"
-                            aria-label="Amount (to the nearest dollar)" name="rate" id="rate" required>
-
-                        </div>
                       </div>
-                      <div class="col-md-6">
+
+                      <div class="col-md-3">
+                        <h4>Weight</h4>
+                      </div>
+                      <div class="col-md-9">
                         <div class="input-group mb-3">
                           <input type="number" placeholder="Material Weight" class="form-control"
-                            aria-label="Amount (to the nearest dollar)" name="weight" id="weight" required>
+                            aria-label="Amount (to the nearest dollar)" name="weight" id="weight">
                           <span class="input-group-text">grams</span>
                         </div>
                       </div>
-
-                      <div class="col-md-6">
+                    </div>
+                    <br>
+                    <div class="row g-3" id="divGoldSmith">
+                      <div class="col-md-3">
+                        <h4>Name</h4>
+                      </div>
+                      <div class="col-md-7" id="divName">
                         <div class="input-group mb-3">
-                          <span class="input-group-text">Rs</span>
-                          <input type="number" placeholder="Material Amount" class="form-control"
-                            aria-label="Amount (to the nearest dollar)" name="purchaseAmount" id="purchaseAmount"
-                            readonly>
+                          <select name="userid" id="userid" class="form-select"
+                            aria-label="Default select example">
+                              <% if(users) { for(var idx=0; idx<users.length; idx++) { %>
+                                <option value="<%= users[idx].USER_ID %>"><%= users[idx].NAME %></option>
+                              <% } } %>
+                          </select>
                         </div>
                       </div>
-
-
+                      
+                      <div class="col-md-2" id="divAdd">
+                        <div class="input-group mb-3">
+                          <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                            data-bs-target="#addgoldsmithModal">
+                            <i class="bi bi-person-plus-fill"></i>
+                          </button>
+                        </div>
+                      </div>
+                     
                     </div><!-- End No Labels Form -->
 
                   </div>
@@ -131,30 +147,69 @@
           </div>
         </div>
       </div><!-- End Basic Modal-->
+
+      <div class="modal fade" id="addgoldsmithModal" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="card-title">Add Gold Smith</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="/adduser" method="POST">
+              <div class="modal-body">
+
+                <div class="card">
+                  <div class="card-body">
+
+
+                    <!-- No Labels Form -->
+                    <div class="row g-3">
+
+                      <div class="col-md-12" id="divName">
+                        <div class="input-group mb-3">
+                          <span class="input-group-text">Name</span>
+                          <input type="text" placeholder="Gold Smith" class="form-control"
+                            aria-label="Amount (to the nearest dollar)" name="gname" id="gname">
+
+                        </div>
+                      </div>
+                      <div class="col-md-12" id="divMobile">
+                        <div class="input-group mb-3">
+                          <span class="input-group-text">Mobile</span>
+                          <input placeholder="Mobile Number" class="form-control" aria-label="" maxlength="10"
+                            name="gmobile" id="gmobile" type="number" maxlength="10"
+                            oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);">
+                        </div>
+                      </div>
+                    </div><!-- End No Labels Form -->
+
+                  </div>
+                </div>
+
+
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Save</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div><!-- End Basic Modal-->
     </section>
 
   </main><!-- End #main -->
   <script>
-    $('#weight').on('input', function (e) {
-      var weight = $("#weight").val();
-      var rate = $("#rate").val();
-      calculateAmount(weight, rate);
-    });
-    $('#rate').on('input', function (e) {
-      var weight = $("#weight").val();
-      var rate = $("#rate").val();
-      calculateAmount(weight, rate);
-    });
-    function calculateAmount(weight, rate) {
-      if (weight == null || weight == undefined) {
-        weight = 0;
-      }
-      if (rate == null || rate == undefined) {
-        rate = 0;
-      }
-      var amount = parseFloat(weight) * parseFloat(rate);
-      $("#purchaseAmount").val(parseFloat(amount).toFixed(2));
 
-    }
-   </script>
+    $('#divGoldSmith').hide();
+   $('#stockType').change(function () {
+      if ($('#stockType').val() != '1') {
+     
+        $('#divGoldSmith').show();
+      } else {
+      
+        $('#divGoldSmith').hide();
+      }
+    });
+  </script>
   <%- include("../partials/_footer") %>

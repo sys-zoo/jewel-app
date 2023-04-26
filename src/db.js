@@ -5,5 +5,5 @@ export const pool = createPool({
   user: "root",
   password: "Root@123",
   port: 3306,
-  database: "JWELLERY_SHOP_DB_V1"
+  database: "jewel_db"
 });

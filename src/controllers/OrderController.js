@@ -18,8 +18,8 @@ export const addOrder = async (req, res) => {
             var orderNumber = new Date().getTime();
             var request = req.body;
             if (request) {
-                var sql = "INSERT INTO JWL_ORDER (ORDER_NO,ORDER_TYPE,NAME,MOBILE,ADDRESS,ITEM_TYPE,RATE,WEIGHT,PURCHASE_AMT,ADVANCE_AMT,OLD_ITEM_TYPE,OLD_RATE,OLD_WEIGHT,OLD_ITEM_AMT,DELIVERED_ON) VALUES ?";
-                var values = [[orderNumber,request.orderType,request.name,request.mobile,request.address,request.itemType,request.rate,request.weight,request.purchaseAmount,request.advanceAmount,request.oldItemType,request.oldRate,request.oldWeight,request.oldItemAmount,request.deliveredDate]];
+                var sql = "INSERT INTO JWL_ORDER (ORDER_NO,ORDER_TYPE,NAME,MOBILE,ADDRESS,ITEM_TYPE,RATE,WEIGHT,PURCHASE_AMT,ADVANCE_AMT,OLD_ITEM_TYPE,OLD_RATE,OLD_WEIGHT,OLD_ITEM_AMT,DELIVERED_ON,PAYMENT_MODE) VALUES ?";
+                var values = [[orderNumber,request.orderType,request.name,request.mobile,request.address,request.itemType,request.rate,request.weight,request.purchaseAmount,getValue(request.advanceAmount),request.oldItemType,getValue(request.oldRate),getValue(request.oldWeight),getValue(request.oldItemAmount),request.deliveredDate,request.paymentMode]];
                 const [status] = await pool.query(sql, [values], function (err, result) {
                     if (err) throw err;
                     return result.affectedRows;
@@ -33,13 +33,21 @@ export const addOrder = async (req, res) => {
                     });
                     var orderPId = rowsOrderPId[0].ORDER_ID;
                     console.log("O PID = " + orderPId);
-                    var trackOrderQuery = "INSERT INTO JWL_ORDER_TRACK (ORDER_ID,ACTION_TYPE_ID,CONTENT,RATE,WEIGHT,AMOUNT_TYPE,AMOUNT,PAYMENT_MODE) VALUES ?";
-                    var trackValues = [[orderPId,1,request.content,request.rate,request.weight,1,request.advanceAmount,request.paymentMode]];
+                    var trackOrderQuery = "INSERT INTO JWL_ORDER_TRACK (ORDER_ID,ACTION_TYPE_ID,CONTENT,RATE,WEIGHT) VALUES ?";
+                    var trackValues = [[orderPId,1,request.content,request.rate,request.weight]];
                     const [statusTrack] = await pool.query(trackOrderQuery, [trackValues], function (err, result) {
                         if (err) throw err;
                         return result.affectedRows;
                     });
-                    res.redirect('/vieworder?status=success');
+                    if(isNotNull(request.advanceAmount)){
+                        var trackOrderQuery = "INSERT INTO JWL_ORDER_TRACK (ORDER_ID,ACTION_TYPE_ID,AMOUNT_TYPE,AMOUNT,PAYMENT_MODE) VALUES ?";
+                        var trackValues = [[orderPId,3,1,getValue(request.advanceAmount),request.paymentMode]];
+                        const [statusAdvanceAmt] = await pool.query(trackOrderQuery, [trackValues], function (err, result) {
+                            if (err) throw err;
+                            return result.affectedRows;
+                        });
+                    }
+                    res.redirect('/viewBasicOrder?status=success');
                 }
             }
 
@@ -49,7 +57,70 @@ export const addOrder = async (req, res) => {
         res.end();
     }
 };
+var getValue = function (value) {
+    return isNull(value)?'0.00':value;
+}
+var isNull = function (value) {
+    return (value == undefined || value == null || value =='')?true:false;
+}
+var isNotNull = function (value) {
+    return !isNull(value);
+}
 export const viewOrder = async (req, res) => {
+    var isLogin = localStorage.getItem('isLogin');
+    if (isLogin == undefined || isLogin==null || isLogin == '0') {
+        res.redirect('/login?err=Session expired!!!');
+        res.end();
+    } else {
+        var userInfo = localStorage.getItem('userInfo');
+        var userInfoData = JSON.parse(userInfo);
+        try {
+            const [rows] = await pool.query('SELECT * FROM JWL_ORDER WHERE IS_DEL=0 ORDER BY CREATED_ON DESC', [], (err, rows) => {
+                return rows;
+            });
+            res.render("order/order", {
+                stocks: rows,
+                rowCount: 0,
+                userInfoData: userInfoData
+            });
+            res.end();
+        } catch (e) {
+            console.log(e);
+        }
+        res.end();
+    }
+};
+
+export const viewBasicOrder = async (req, res) => {
+    var isLogin = localStorage.getItem('isLogin');
+    if (isLogin == undefined || isLogin==null || isLogin == '0') {
+        res.redirect('/login?err=Session expired!!!');
+        res.end();
+    } else {
+        var userInfo = localStorage.getItem('userInfo');
+        var userInfoData = JSON.parse(userInfo);
+        try {
+            const [rows] = await pool.query('SELECT JO.*,USER.NAME AS GOLDSMITH_NAME FROM JWL_ORDER JO LEFT JOIN JWL_USER USER ON JO.GOLDSMITH_USER_ID=USER.USER_ID WHERE JO.IS_DEL=0 ORDER BY JO.CREATED_ON DESC', [], (err, rows) => {
+                return rows;
+            });
+            const [userrows] = await pool.query('SELECT * FROM JWL_USER WHERE IS_GS=1', [], (err, userrows) => {
+                return userrows;
+            });
+            res.render("order/orderbasic", {
+                stocks: rows,
+                users : userrows,
+                rowCount: 0,
+                userInfoData: userInfoData
+            });
+            res.end();
+        } catch (e) {
+            console.log(e);
+        }
+        res.end();
+    }
+};
+
+export const viewCash = async (req, res) => {
     var isLogin = localStorage.getItem('isLogin');
     if (isLogin == undefined || isLogin==null || isLogin == '0') {
         res.redirect('/login?err=Session expired!!!');
@@ -61,12 +132,78 @@ export const viewOrder = async (req, res) => {
             const [rows] = await pool.query('SELECT * FROM JWL_ORDER ORDER BY CREATED_ON DESC', [], (err, rows) => {
                 return rows;
             });
-            res.render("order/order", {
+            res.render("order/orderbasic", {
                 stocks: rows,
                 rowCount: 0,
                 userInfoData: userInfoData
             });
             res.end();
+        } catch (e) {
+            console.log(e);
+        }
+        res.end();
+    }
+};
+
+export const deleteOrder = async (req, res) => {
+    var isLogin = localStorage.getItem('isLogin');
+    if (isLogin == undefined || isLogin==null || isLogin == '0') {
+        res.redirect('/login?err=Session expired!!!');
+        res.end();
+    } else {
+        var orderNumber = req.query.deleteOrderNumber;
+        try {
+            const [status] = await pool.query('UPDATE JWL_ORDER SET IS_DEL = 1 WHERE ORDER_NO = ?', [orderNumber], (err, rows) => {
+                return rows;
+            });
+            var err = "success";
+            if(status==0){
+                err = "Error"
+            }
+            res.redirect('/viewBasicOrder?status=' + err);
+            res.end();
+        } catch (e) {
+            console.log(e);
+        }
+        res.end();
+    }
+};
+
+export const assignTo = async (req, res) => {
+    var isLogin = localStorage.getItem('isLogin');
+    if (isLogin == undefined || isLogin==null || isLogin == '0') {
+        res.redirect('/login?err=Session expired!!!');
+        res.end();
+    } else {
+        var request = req.body;
+        var userInfo = localStorage.getItem('userInfo');
+        var userInfoData = JSON.parse(userInfo);
+        var err  = "";
+        try {
+            if (request) {
+                console.info(request);
+                const [status] = await pool.query("UPDATE JWL_ORDER SET GOLDSMITH_USER_ID = ?,STATUS=2 WHERE ORDER_NO= ?", [request.userId,request.orderNumber], function (err, result) {
+                    if (err) throw err;
+                    return result.affectedRows;
+                });
+                if (status == 0) {
+                    res.render("order/order", { rows: [], err: "Unable to set the Goldsmith", userInfoData : userInfoData });
+                    res.end();
+                } else {
+                    var trackOrderQuery = "INSERT INTO JWL_ORDER_TRACK (ORDER_ID,GOLDSMITH_USER_ID,ACTION_TYPE_ID) VALUES ?";
+                    var trackValues = [[request.orderId,request.userId,2]];
+                    const [statusAdvanceAmt] = await pool.query(trackOrderQuery, [trackValues], function (err, result) {
+                        if (err) throw err;
+                        return result.affectedRows;
+                    });
+                    var err = "success";
+                    if(status==0){
+                        err = "Error"
+                    }
+                    res.redirect('/viewBasicOrder?status=' + err);
+                    res.end();
+                }
+           }
         } catch (e) {
             console.log(e);
         }
@@ -86,26 +223,51 @@ export const viewOrderDetails = async (req, res) => {
             const [rowsOrder] = await pool.query('SELECT * FROM JWL_ORDER WHERE ORDER_NO =?', [orderNumber], (err, rows) => {
                 return rows;
             });
-            var orderPId = rowsOrder[0].ORDER_ID;
-            const [rows] = await pool.query('SELECT * FROM JWL_ORDER_TRACK o join JWL_ACTION_TYPE at on o.ACTION_TYPE_ID=at.ACTION_TYPE_ID where o.ORDER_ID=?', [orderPId], (err, rows) => {
-                return rows;
-            });
-            const [rowsActionType] = await pool.query('SELECT * FROM JWL_ACTION_TYPE', [], (err, rows) => {
-                return rows;
-            });
-            const [rowsStock] = await pool.query('SELECT * FROM JWL_STOCK', [], (err, rows) => {
-                return rows;
-            });
-            localStorage.setItem('currentNumber', orderNumber);
-            localStorage.setItem('currentOrderId', orderPId);
-            res.render("order/orderView", {
-                order : rowsOrder,
-                orderDetails: rows,
-                stock : rowsStock,
-                rowsActionType : rowsActionType,
-                rowCount: 0,
-                userInfoData: userInfoData,
-            });
+            if(rowsOrder.length>0){
+                var orderPId = rowsOrder[0].ORDER_ID;
+                const [rows] = await pool.query('SELECT * FROM JWL_ORDER_TRACK o join JWL_ACTION_TYPE at on o.ACTION_TYPE_ID=at.ACTION_TYPE_ID LEFT JOIN JWL_USER USER ON o.GOLDSMITH_USER_ID=USER.USER_ID where o.ORDER_ID=? ORDER BY o.CREATED_ON DESC', [orderPId], (err, rows) => {
+                    return rows;
+                });
+                var conditionQuery = "";
+                var isItemDeliveredFromGS = 0;
+                if(rows.length>0){
+                    for(var idx=0;idx<rows.length;idx++){
+                        if(rows[idx].ACTION_TYPE_ID==4){
+                            conditionQuery = " WHERE ACTION_TYPE_ID>4";
+                            isItemDeliveredFromGS = 1;
+                        }
+                    }
+                }
+                const [rowsActionType] = await pool.query('SELECT * FROM JWL_ACTION_TYPE' + conditionQuery, [], (err, rows) => {
+                    return rows;
+                });
+                const [rowsStock] = await pool.query('SELECT * FROM JWL_STOCK', [], (err, rows) => {
+                    return rows;
+                });
+                localStorage.setItem('currentNumber', orderNumber);
+                localStorage.setItem('currentOrderId', orderPId);
+                res.render("order/orderView", {
+                    order : rowsOrder,
+                    orderDetails: rows,
+                    stock : rowsStock,
+                    orderNumber : orderNumber,
+                    rowsActionType : rowsActionType,
+                    rowCount: 0,
+                    userInfoData: userInfoData,
+                    isItemDeliveredFromGS : isItemDeliveredFromGS
+                });
+            }else{
+                res.render("order/orderView", {
+                    order : [],
+                    orderDetails: [],
+                    stock : [],
+                    orderNumber : "",
+                    rowsActionType : [],
+                    rowCount: 0,
+                    userInfoData: userInfoData,
+                    isItemDeliveredFromGS : 0
+                });
+            }
             res.end();
         } catch (e) {
             console.log(e);
@@ -123,8 +285,8 @@ export const addOrderInfo = async (req, res) => {
             var orderPId = localStorage.getItem('currentOrderId');
             var orderNumber = localStorage.getItem('currentNumber');
             var request = req.body;
-            var trackOrderQuery = "INSERT INTO JWL_ORDER_TRACK (ORDER_ID,ACTION_TYPE_ID,CONTENT,RATE,WEIGHT,AMOUNT_TYPE,AMOUNT,PAYMENT_MODE) VALUES ?";
-            var trackValues = [[orderPId,request.atype,request.content,request.rate,request.weight,request.amountType,request.amount,request.paymentMode]];
+            var trackOrderQuery = "INSERT INTO JWL_ORDER_TRACK (ORDER_ID,WAGES_NAME,ACTION_TYPE_ID,CONTENT,RATE,WEIGHT,AMOUNT_TYPE,AMOUNT,PAYMENT_MODE) VALUES ?";
+            var trackValues = [[orderPId,request.wagesName,request.atype,request.content,getValue(request.rate),getValue(request.weight),request.amountType,getValue(request.amount),request.paymentMode]];
             const [statusTrack] = await pool.query(trackOrderQuery, [trackValues], function (err, result) {
             if (err) throw err;
                 return result.affectedRows;

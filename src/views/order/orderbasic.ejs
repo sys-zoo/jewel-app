@@ -25,27 +25,20 @@
         </div>
       </div>
       <hr>
-      <div class="row" style="overflow-x: auto; overflow-y: hidden;">
+      <div class="row" >
         <div class="col-lg-12">
           <div class="row">
             <div class="col-xxl-12 col-md-12">
               <table id="example" class="ui celled table" style="width:100%">
                 <thead>
                   <tr>
-                    <th>#</th>
                     <th>Order #</th>
                     <th>Name</th>
-                    <th>Mobile</th>
-                    <th>Address</th>
                     <th>Item Type</th>
                     <th>Rate</th>
                     <th>Weight</th>
                     <th>Purchase Amt</th>
-                    <th>Advance Amt</th>
-                    <th>Old Item Type</th>
-                    <th>Old Rate</th>
-                    <th>Old Weight</th>
-                    <th>Old Amt</th>
+                    <th>GoldSmith</th>
                     <th>Order On</th>
                     <th>Delivered On</th>
                     <th>Status</th>
@@ -55,20 +48,12 @@
                 <tbody>
                   <% if(stocks) { for(var idx=0; idx<stocks.length; idx++) { %>
                     <tr>
-                      <td>
-                        <%= parseInt((idx+1)) %>
-                      </td>
-                      <td>
+                     <td>
                         <a href="vieworderdet?o=<%= stocks[idx].ORDER_NO %>"><%= stocks[idx].ORDER_NO %></a>
                       </td>
                       <td>
-                        <%= stocks[idx].NAME %>
-                      </td>
-                      <td>
-                        <%= stocks[idx].MOBILE %>
-                      </td>
-                      <td>
-                        <%= stocks[idx].ADDRESS %>
+                        <i class="bi bi-person-fill"></i>&nbsp;<%= stocks[idx].NAME %><br>
+                        <i class="bi bi-telephone-fill"></i>&nbsp;<%= stocks[idx].MOBILE %>
                       </td>
                       <td>
                         <%= stocks[idx].ITEM_TYPE %>
@@ -80,22 +65,19 @@
                         <%= stocks[idx].WEIGHT %>
                       </td>
                       <td>
-                        <%= stocks[idx].PURCHASE_AMT %>
+                        <%= stocks[idx].PURCHASE_AMT %> 
                       </td>
-                      <td>
-                        <%= stocks[idx].ADVANCE_AMT %>
-                      </td>
-                      <td>
-                        <%= stocks[idx].ITEM_TYPE %>
-                      </td>
-                      <td>
-                        <%= stocks[idx].OLD_RATE %>
-                      </td>
-                      <td>
-                        <%= stocks[idx].OLD_WEIGHT %>
-                      </td>
-                      <td>
-                        <%= stocks[idx].OLD_ITEM_AMT %>
+                       <td>
+                        <% if(stocks[idx].GOLDSMITH_USER_ID) { %>
+                          <%= stocks[idx].GOLDSMITH_NAME %>
+                          <a href="#" onclick="openAssignTo('<%= stocks[idx].ORDER_ID %>', '<%= stocks[idx].ORDER_NO %>');">
+                            <i class="bi bi-pencil"></i>&nbsp;Change
+                          </a>&nbsp;&nbsp
+                        <% } else { %>
+                          <button type="button" class="btn btn-primary btn-sm" onclick="openAssignTo('<%= stocks[idx].ORDER_ID %>', '<%= stocks[idx].ORDER_NO %>');">
+                            <i class="bi bi-plus-circle"></i>&nbsp;Set Goldsmith
+                          </button>&nbsp;&nbsp
+                        <% } %>
                       </td>
                       <td>
                         <%= new Date(stocks[idx].CREATED_ON).toJSON().slice(0,10) %>
@@ -105,28 +87,30 @@
                       </td>
                       <td>
                         <% if(stocks[idx].STATUS==1) { %>
-                          ORDER PLACED
-                       <% } else if(stocks[idx].STATUS==2) { %>
-                          ORDER ASSIGNED TO GOLDSMITH
-                       <% } else if(stocks[idx].STATUS==3) { %>
-                          ITEM RECEIVED
-                       <% } else if(stocks[idx].STATUS==4) { %>
-                          ITEM DELIVERED
-                       <% } else if(stocks[idx].STATUS==5) { %>
-                          ORDER COMPLETED
-                       <% } else if(stocks[idx].STATUS==6) { %>
-                          ORDER HOLD
-                       <% } else if(stocks[idx].STATUS==7) { %>
-                          ORDER CANCELLED
-                       <% } %>
+                             ORDER PLACED
+                          <% } else if(stocks[idx].STATUS==2) { %>
+                             ORDER ASSIGNED TO GOLDSMITH
+                          <% } else if(stocks[idx].STATUS==3) { %>
+                             ITEM RECEIVED
+                          <% } else if(stocks[idx].STATUS==4) { %>
+                             ITEM DELIVERED
+                          <% } else if(stocks[idx].STATUS==5) { %>
+                             ORDER COMPLETED
+                          <% } else if(stocks[idx].STATUS==6) { %>
+                             ORDER HOLD
+                          <% } else if(stocks[idx].STATUS==7) { %>
+                             ORDER CANCELLED
+                          <% } %>
+
+                        
                       </td>
-                      <td>
-                        <% if(stocks[idx].STATUS==3) { %>
-                          <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#basicModal">
-                           <i class="bi bi-record-fill"></i>&nbsp;Deliver To Customer
-                         </button>&nbsp;&nbsp;
-                         <% } %>
-                      </td>
+                     <td>  <% if(stocks[idx].STATUS!=5) { %>
+                      <form action="/deleteOrder" method="GET">
+                        <input type="hidden" id="deleteOrderNumber" name="deleteOrderNumber" value="<%= stocks[idx].ORDER_NO %>">
+                        &nbsp;&nbsp;<button type="submit" class="btn btn-outline-danger btn-sm" >
+                        <i class="bi bi-trash"></i>&nbsp;</button>&nbsp;&nbsp
+                      </form>
+                    <% } %></td>
                     </tr>
                     <% } } %>
               </table>
@@ -210,20 +194,20 @@
                       <div class="col-md-3">
                         <div class="input-group mb-3">
                           <input type="text" placeholder="Old Item Type" class="form-control" aria-label=""
-                            name="olditemType" id="olditemType" value="0.0">
+                            name="olditemType" id="olditemType">
                         </div>
                       </div>
                       <div class="col-md-3">
                         <div class="input-group mb-3">
                           <span class="input-group-text">Rs</span>
                           <input type="text" placeholder="Material Rate" class="form-control"
-                            aria-label="Amount (to the nearest dollar)" name="oldRate" id="oldRate" value="0.0">
+                            aria-label="Amount (to the nearest dollar)" name="oldRate" id="oldRate" >
                         </div>
                       </div>
                       <div class="col-md-3">
                         <div class="input-group mb-3">
                           <input type="text" placeholder="Material Weight" class="form-control"
-                            aria-label="Amount (to the nearest dollar)" name="oldWeight" id="oldWeight" value="0.0">
+                            aria-label="Amount (to the nearest dollar)" name="oldWeight" id="oldWeight" >
                           <span class="input-group-text">grams</span>
                         </div>
                       </div>
@@ -231,7 +215,7 @@
                         <div class="input-group mb-3">
                           <span class="input-group-text">Rs</span>
                           <input type="text" placeholder="Old Material Amount" class="form-control"
-                            aria-label="Amount (to the nearest dollar)" name="oldItemAmount" id="oldItemAmount" value="0.0" readonly>
+                            aria-label="Amount (to the nearest dollar)" name="oldItemAmount" id="oldItemAmount"  readonly>
                         </div>
                       </div>
                       <div class="col-md-3">
@@ -245,7 +229,7 @@
                         <div class="input-group mb-3">
                           <span class="input-group-text">Rs</span>
                           <input type="number" placeholder="Advance Amount" class="form-control"
-                            aria-label="Amount (to the nearest dollar)" name="advanceAmount" id="advanceAmount" value="0.0"
+                            aria-label="Amount (to the nearest dollar)" name="advanceAmount" id="advanceAmount" 
                             >
                         </div>
                       </div>
@@ -265,7 +249,7 @@
                         <div class="input-group mb-3">
                           <span class="input-group-text">Balance</span>
                           <input type="text" placeholder="Balance Amount" class="form-control"
-                            aria-label="Amount (to the nearest dollar)" name="balanceAmount" id="balanceAmount" value="0.0" readonly>
+                            aria-label="Amount (to the nearest dollar)" name="balanceAmount" id="balanceAmount" readonly>
                         </div>
                       </div>
                      
@@ -284,11 +268,122 @@
           </div>
         </div>
       </div><!-- End Basic Modal-->
+
+      <div class="modal fade" id="goldsmithModal" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="card-title">Order Assign To </h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="/assignTo" method="POST">
+              <div class="modal-body">
+                <div class="row g-3" id="divGoldSmith">
+                  <div class="col-md-3">
+                    <h4>Order Number</h4>
+                  </div>
+                  <div class="col-md-7" id="divName">
+                    <input type="text" id="orderNumber" name="orderNumber" class="form-control" readonly> 
+                    <input type="text" id="orderId" name="orderId" class="form-control" style="color: #ffffff; border: 0px; width: 0px;" readonly> 
+                    </div>
+                    <div class="row g-3" id="divGoldSmith">
+                      <div class="col-md-3">
+                        <h4>Goldsmith Name</h4>
+                      </div>
+                      <div class="col-md-7" id="divName">
+                        <div class="input-group mb-3">
+                          <select name="userId" id="userId" class="form-select"
+                            aria-label="Default select example">
+                              <% if(users) { for(var idx=0; idx<users.length; idx++) { %>
+                                <option value="<%= users[idx].USER_ID %>"><%= users[idx].NAME %>  [<%= users[idx].INSTOCK_WEIGHT %> grams]</option>
+                              <% } } %>
+                          </select>
+                        </div>
+                      </div>
+                      
+                      <div class="col-md-2" id="divAdd">
+                        <div class="input-group mb-3">
+                          <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                            data-bs-target="#addgoldsmithModal">
+                            <i class="bi bi-person-plus-fill"></i>
+                          </button>
+                        </div>
+                      </div>
+                     
+                    </div><!-- End No Labels Form -->
+
+
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Set</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div><!-- End Basic Modal-->
+      <div class="modal fade" id="addgoldsmithModal" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="card-title">Add Gold Smith</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="/adduser" method="POST">
+              <div class="modal-body">
+
+                   <!-- No Labels Form -->
+                    <div class="row g-3">
+
+                      <div class="col-md-12" id="divName">
+                        <div class="input-group mb-3">
+                          <span class="input-group-text">Name</span>
+                          <input type="text" placeholder="Gold Smith" class="form-control"
+                            aria-label="Amount (to the nearest dollar)" name="gname" id="gname">
+
+                        </div>
+                      </div>
+                      <div class="col-md-12" id="divMobile">
+                        <div class="input-group mb-3">
+                          <span class="input-group-text">Mobile</span>
+                          <input placeholder="Mobile Number" class="form-control" aria-label="" maxlength="10"
+                            name="gmobile" id="gmobile" type="number" maxlength="10"
+                            oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);">
+                        </div>
+                      </div>
+                    </div><!-- End No Labels Form -->
+
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Save</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div><!-- End Basic Modal-->
+      <div class="modal fade" id="dGoldsmithModal" tabindex="-1">
+        <div class="modal-dialog">
+          
+        </div>
+      </div><!-- End Basic Modal-->
     </section>
 
   </main><!-- End #main -->
   <script>
-    // $('#deliveredDate').val(new Date().toJSON().slice(0, 10));
+     function openAssignTo(orderId, orderNo){
+      //alert(order + " " + orderNo);
+      $('#orderNumber').val(orderNo);
+      $('#orderId').val(orderId);
+      $('#goldsmithModal').modal('show');
+    };
+
+    
+    function deleteOrderNumber(orderNo){
+    //  $('#delOrderNumber').val(orderNo);
+      $('#dGoldsmithModal').modal('show');
+    };
+
     var now = new Date();
     var day = ("0" + now.getDate()).slice(-2);
     var month = ("0" + (now.getMonth() + 1)).slice(-2);

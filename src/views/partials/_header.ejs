@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <title>In-Stock - JEWEL</title>
+  <title>ARC</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
 
@@ -40,24 +40,20 @@
   <header id="header" class="header fixed-top d-flex align-items-center">
 
     <div class="d-flex align-items-center justify-content-between">
-      <i class="bi bi-list toggle-sidebar-btn"></i>
+     
       <a href="/" class="logo d-flex align-items-center">
-        <img src="/assets/img/logo.png" alt="">
-        <span class="d-none d-lg-block">JEWELL</span>
+      
+        <span class="d-none d-lg-block">ARC</span>
       </a>
 
     </div><!-- End Logo -->
 
+   
     <div class="search-bar">
-      <form class="search-form d-flex align-items-center" method="GET" action="/vieworderdet">
-        <input type="text" name="o" placeholder="Search Order" title="Enter search keyword">
-        <button type="submit" title="Search"><i class="bi bi-search"></i></button>
-        
-      </form>
+      <a href="/viewStock" class="btn btn-outline-primary" ><i class="bi bi-bank"></i>&nbsp;Stock</a>
+      <a href="/viewbasicorder" class="btn btn-outline-primary" ><i class="bi bi-cart-check-fill"></i>&nbsp;Order</a>
+      <a href="/viewcash" class="btn btn-outline-primary" ><i class="bi bi-cash"></i>&nbsp;Cash</a>
       
-    </div><!-- End Search Bar -->
-    <div class="search-bar">
-      <a href="/vieworder" class="btn btn-warning" ><i class="bi bi-cart-check-fill"></i>&nbsp;Go To New Order Create Page</a>
     </div>
     <nav class="header-nav ms-auto">
       <ul class="d-flex align-items-center">
@@ -71,7 +67,7 @@
         <li class="nav-item dropdown pe-3">
 
           <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-            <img src="/assets/img/profile-img.jpg" alt="Profile" class="rounded-circle">
+            <img src="/assets/img/user.png" alt="Profile" class="rounded-circle">
             <span class="d-none d-md-block dropdown-toggle ps-2">
               <%= userInfoData.NAME %>
             </span>
@@ -108,55 +104,6 @@
     </nav><!-- End Icons Navigation -->
 
   </header><!-- End Header -->
-  <!-- ======= Sidebar ======= -->
-  <aside id="sidebar" class="sidebar">
-
-    <ul class="sidebar-nav" id="sidebar-nav">
-
-      <!-- <li class="nav-item">
-        <a class="nav-link " href="index.html">
-          <i class="bi bi-grid"></i>
-          <span>Dashboard</span>
-        </a>
-      </li> -->
-
-      <!-- End Components Nav -->
-
-      <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-journal-text"></i><span>Stock Overview</span><i class="bi bi-chevron-down ms-auto"></i>
-        </a>
-        <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-          <li>
-            <a href="/viewStock">
-              <i class="bi bi-circle"></i><span>Stock</span>
-            </a>
-          </li>
-          <li>
-            <a href="viewStockHis">
-              <i class="bi bi-circle"></i><span>Stock Details</span>
-            </a>
-          </li>
-
-        </ul>
-      </li>
-
-      <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-menu-button-wide"></i><span>Order Overview</span><i class="bi bi-chevron-down ms-auto"></i>
-        </a>
-        <ul id="components-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-          <li>
-            <a href="vieworder">
-              <i class="bi bi-circle"></i><span>Order Details</span>
-            </a>
-          </li>
-          
-
-        </ul>
-      </li>
-    </ul>
-  </aside><!-- End Sidebar-->
 
 
   <!-- ======= Footer ======= -->

@@ -1,29 +1,12 @@
 <%- include("../partials/_header") %>
   <main id="main" class="main">
     <div class="pagetitle">
-      <h1><% if(stockTypeId ==1) { %> 
-            In-Stock
-          <% } else if(stockTypeId ==2) {%>
-            Goldsmith Stock
-          <% } else if(stockTypeId ==3) {%>
-            Received Stock
-          <% } %>  
-        History</h1>
+      <h1>Goldsmith History</h1>
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="/">Home</a></li>
-          <% if(stockTypeId ==1) { %> 
-            <li class="breadcrumb-item"><a href="/viewStock">Stock Overview</a></li>
-            <li class="breadcrumb-item active">In Stock History</li>
-          <% } else if(stockTypeId ==2) {%>
-            <li class="breadcrumb-item"><a href="/viewgoldstockhis">Goldsmith Overview</a></li>
-            <li class="breadcrumb-item active">In Stock History</li>
-          <% } else if(stockTypeId ==3) {%>
-            <li class="breadcrumb-item"><a href="/viewgoldstockhis">Goldsmith Overview</a></li>
-            <li class="breadcrumb-item active">Out Stock History</li>
-          <% } %>  
-       
-         
+          <li class="breadcrumb-item"><a href="/viewStock">Stock Overview</a></li>
+          <li class="breadcrumb-item active">Goldsmith Stock History</li>
         </ol>
       </nav>
     </div><!-- End Page Title -->
@@ -48,38 +31,31 @@
                 <thead>
                   <tr>
                     <th>#</th>
-                    <!-- <th>Material Type</th> -->
-                    
-                    <% if(stockTypeId == 2 || stockTypeId == 3){ %>  
-                      <th>Name</th>
-                      <th>Mobile</th>
-                    <% } %>
-                    <th>Weight</th>
+                    <th>Name</th>
+                    <th>Mobile</th>
+                    <th>In Stock</th>
+                    <th>Out Stock</th>
                     <th>Created On</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <% if(stocks) { for(var idx=0; idx<stocks.length; idx++) { %>
+                  <% if(users) { for(var idx=0; idx<users.length; idx++) { %>
                     <tr>
                       <td>
                         <%= parseInt((idx+1)) %>
                       </td>
-                      <!-- <td>
-                        <% if (parseInt(stocks[idx].IS_OLD_MATERIAL)==1) { %>
-                          OLD
-                          <% } else { %>
-                            NEW
-                          <% } %>
-                      </td> -->
-                      <% if(stocks[idx].STOCK_TYPE_ID == 2 || stocks[idx].STOCK_TYPE_ID == 3){ %>  
-                        <td> <%= stocks[idx].NAME %></td>
-                        <td> <%= stocks[idx].MOBILE %></td>
-                      <% } %>
+                      <td> <%= users[idx].NAME %></td>
+                      <td> <%= users[idx].MOBILE %></td>
                       <td>
-                        <%= stocks[idx].WEIGHT %> grams
+                        <%= users[idx].INSTOCK_WEIGHT %> grams <a href="viewStockHis?st=2&u=<%= users[idx].USER_ID %>"><i
+                          class="fa fa-external-link"></i>View</a>
                       </td>
                       <td>
-                        <%= new Date(stocks[idx].CREATED_ON).toJSON().slice(0,10) %>
+                        <%= users[idx].OUTSTOCK_WEIGHT %> grams <a href="viewStockHis?st=3&u=<%= users[idx].USER_ID %>"><i
+                          class="fa fa-external-link"></i>View</a>
+                      </td>
+                      <td>
+                        <%= new Date(users[idx].CREATED_ON).toJSON().slice(0,10) %>
                       </td>
                     </tr>
                     <% } } %>
