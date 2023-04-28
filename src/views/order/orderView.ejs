@@ -77,7 +77,7 @@
                   <% if(orderDetails) { for(var idx=0; idx<orderDetails.length; idx++) { %>
                     <tr>
                       <td>
-                        <%= new Date(orderDetails[idx].CREATED_ON).toJSON().slice(0,10)%>
+                        <%= new Date(orderDetails[idx].CREATED_ON).toString().slice(0,25) %>
                       </td>
                       <td>
                         <% if(orderDetails[idx].ACTION_TYPE_ID==1) { %>
@@ -142,7 +142,15 @@
                                                               <tr>
                                                                 <td><b>Payment Mode</b></td>
                                                                 <td><b>
-                                                                    <%= orderDetails[idx].PAYMENT_MODE %>
+                                                                    <% if(orderDetails[idx].PAYMENT_MODE==1){  %>
+                                                                      Cash
+                                                                    <% }else if(orderDetails[idx].PAYMENT_MODE==2){  %>
+                                                                      E-Transfer
+                                                                    <% } else if(orderDetails[idx].PAYMENT_MODE==3){  %>
+                                                                      Card
+                                                                    <% } else if(orderDetails[idx].PAYMENT_MODE==4){  %>
+                                                                      UPI
+                                                                    <% } %>
                                                                   </b></td>
                                                               </tr>
                                                               <% } else if(orderDetails[idx].ACTION_TYPE_ID==4){ %> <!--Item Received from Goldsmith-->
@@ -178,7 +186,15 @@
                                                                   <tr>
                                                                     <td><b>Payment Mode</b></td>
                                                                     <td><b>
-                                                                        <%= orderDetails[idx].PAYMENT_MODE %>
+                                                                      <% if(orderDetails[idx].PAYMENT_MODE==1){  %>
+                                                                        Cash
+                                                                      <% } else if(orderDetails[idx].PAYMENT_MODE==2){  %>
+                                                                        E-Transfer
+                                                                      <% } else if(orderDetails[idx].PAYMENT_MODE==3){  %>
+                                                                        Card
+                                                                      <% } else if(orderDetails[idx].PAYMENT_MODE==4){  %>
+                                                                        UPI
+                                                                      <% } %>
                                                                       </b></td>
                                                                   </tr>
                                                                   <% } else if(orderDetails[idx].ACTION_TYPE_ID==6){ %> <!--Wages-->
@@ -196,7 +212,16 @@
                                                                     <tr>
                                                                       <td><b>Payment Mode</b></td>
                                                                       <td><b>
-                                                                          <%= (orderDetails[idx].PAYMENT_MODE ==1)?"cash":"GPay" %>
+                                                                        <% if(orderDetails[idx].PAYMENT_MODE==1){  %>
+                                                                          Cash
+                                                                        <% } else if(orderDetails[idx].PAYMENT_MODE==2){  %>
+                                                                          E-Transfer
+                                                                        <% } else if(orderDetails[idx].PAYMENT_MODE==3){  %>
+                                                                          Card
+                                                                        <% } else if(orderDetails[idx].PAYMENT_MODE==4){  %>
+                                                                          UPI
+                                                                        <% } %>
+                                                                        
                                                                         </b></td>
                                                                     </tr>
                                                                   <% } %>
@@ -285,22 +310,13 @@
                             aria-label="Default select example">
                             <option value="0">None</option>
                             <option value="1">Cash</option>
-                            <option value="2">GPay</option>
-                            <option value="3">PhonePe</option>
+                            <option value="2">E-Transfer</option>
+                            <option value="3">Card</option>
+                            <option value="4">UPI</option>
                           </select>
                         </div>
                       </div>
-                      <div class="col-md-4">
-                        <div class="input-group mb-3">
-                          <span class="input-group-text">Amount Type</span>
-                          <select name="amountType" id="amountType" class="form-select"
-                            aria-label="Default select example">
-                            <option value="0">None</option>
-                            <option value="1">Credit</option>
-                            <option value="2">Debit</option>
-                          </select>
-                        </div>
-                      </div>
+                     
                       <div class="col-md-4">
                         <div class="input-group mb-3">
                           <span class="input-group-text">Rs</span>

@@ -37,84 +37,37 @@
 <body>
 
   <!-- ======= Header ======= -->
-  <header id="header" class="header fixed-top d-flex align-items-center">
-
-    <div class="d-flex align-items-center justify-content-between">
-     
-      <a href="/" class="logo d-flex align-items-center">
-      
-        <span class="d-none d-lg-block">ARC</span>
-      </a>
-
-    </div><!-- End Logo -->
-
-   
-    <div class="search-bar">
-      <a href="/viewStock" class="btn btn-outline-primary" ><i class="bi bi-bank"></i>&nbsp;Stock</a>
-      <a href="/viewbasicorder" class="btn btn-outline-primary" ><i class="bi bi-cart-check-fill"></i>&nbsp;Order</a>
-      <a href="/viewcash" class="btn btn-outline-primary" ><i class="bi bi-cash"></i>&nbsp;Cash</a>
-      
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">ARC</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse d-flex justify-content-end" id="navbarNavDropdown">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="/viewbasicorder">Order</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/viewStock">Stock</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/viewcash">Cash Ledger</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <span class="text-primary"><%= userInfoData.NAME %></span>
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+              <li><a class="dropdown-item" href="login">Logout</a></li>
+                </ul>
+          </li>
+        </ul>
+      </div>
     </div>
-    <nav class="header-nav ms-auto">
-      <ul class="d-flex align-items-center">
+  </nav>
 
-        <li class="nav-item d-block d-lg-none">
-          <a class="nav-link nav-icon search-bar-toggle " href="#">
-            <i class="bi bi-search"></i>
-          </a>
-        </li><!-- End Search Icon-->
-
-        <li class="nav-item dropdown pe-3">
-
-          <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-            <img src="/assets/img/user.png" alt="Profile" class="rounded-circle">
-            <span class="d-none d-md-block dropdown-toggle ps-2">
-              <%= userInfoData.NAME %>
-            </span>
-          </a><!-- End Profile Iamge Icon -->
-
-          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
-            <li class="dropdown-header">
-              <h6>
-                <%= userInfoData.NAME %>
-              </h6>
-              <% if(userInfoData.USER_TYPE==1) { %>
-                <span>Owner</span>
-                <% } else if(userInfoData.USER_TYPE==2) { %>
-                  <span>Gold Smith</span>
-                  <% } else if(userInfoData.USER_TYPE==3) { %>
-                    <span>Customer</span>
-                    <% } %>
-            </li>
-            <li>
-              <hr class="dropdown-divider">
-            </li>
-
-            <li>
-              <a class="dropdown-item d-flex align-items-center" href="login">
-                <i class="bi bi-box-arrow-right"></i>
-                <span>Sign Out</span>
-              </a>
-            </li>
-
-          </ul><!-- End Profile Dropdown Items -->
-        </li><!-- End Profile Nav -->
-
-      </ul>
-    </nav><!-- End Icons Navigation -->
-
-  </header><!-- End Header -->
-
-
-  <!-- ======= Footer ======= -->
-  <footer id="footer" class="footer">
-    <div class="copyright">
-      &copy; Copyright <strong><span>SysZoo</span></strong>. All Rights Reserved
-    </div>
-    <div class="credits">
-      Designed by <a href="http://syszoo.com/">Syszoo</a>
-    </div>
-  </footer><!-- End Footer -->
+  
 
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
       class="bi bi-arrow-up-short"></i></a>

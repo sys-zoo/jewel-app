@@ -100,7 +100,7 @@ export const viewBasicOrder = async (req, res) => {
         var userInfo = localStorage.getItem('userInfo');
         var userInfoData = JSON.parse(userInfo);
         try {
-            const [rows] = await pool.query('SELECT JO.*,USER.NAME AS GOLDSMITH_NAME FROM JWL_ORDER JO LEFT JOIN JWL_USER USER ON JO.GOLDSMITH_USER_ID=USER.USER_ID WHERE JO.IS_DEL=0 ORDER BY JO.CREATED_ON DESC', [], (err, rows) => {
+            const [rows] = await pool.query('SELECT JO.*,USER.NAME AS GOLDSMITH_NAME FROM JWL_ORDER JO LEFT JOIN JWL_USER USER ON JO.GOLDSMITH_USER_ID=USER.USER_ID WHERE JO.IS_DEL=0 ORDER BY JO.ORDER_ID DESC', [], (err, rows) => {
                 return rows;
             });
             const [userrows] = await pool.query('SELECT * FROM JWL_USER WHERE IS_GS=1', [], (err, userrows) => {
@@ -129,11 +129,11 @@ export const viewCash = async (req, res) => {
         var userInfo = localStorage.getItem('userInfo');
         var userInfoData = JSON.parse(userInfo);
         try {
-            const [rows] = await pool.query('SELECT * FROM JWL_ORDER ORDER BY CREATED_ON DESC', [], (err, rows) => {
+            const [rows] = await pool.query("select jo.order_no, date_format(jot.created_on,'%d-%m-%Y %H:%m:%s') as order_date, jat.action_type,jot.amount_type,jot.amount as trans_amount,jo.purchase_amt from jwl_order_track jot join jwl_order jo on jot.order_id=jo.order_id join jwl_action_type jat on jot.action_type_id=jat.action_type_id where jot.action_type_id in(3,5,6) and jo.is_del=0 order by jo.order_no desc, jo.created_on asc", [], (err, rows) => {
                 return rows;
             });
-            res.render("order/orderbasic", {
-                stocks: rows,
+            res.render("order/cashview", {
+                orders: rows,
                 rowCount: 0,
                 userInfoData: userInfoData
             });
@@ -285,8 +285,14 @@ export const addOrderInfo = async (req, res) => {
             var orderPId = localStorage.getItem('currentOrderId');
             var orderNumber = localStorage.getItem('currentNumber');
             var request = req.body;
+            var amountType = 0;
+            if(request.atype ==3){
+                amountType = 1;
+            }else if(request.atype ==5 || request.atype ==6){
+                amountType = 2;
+            }
             var trackOrderQuery = "INSERT INTO JWL_ORDER_TRACK (ORDER_ID,WAGES_NAME,ACTION_TYPE_ID,CONTENT,RATE,WEIGHT,AMOUNT_TYPE,AMOUNT,PAYMENT_MODE) VALUES ?";
-            var trackValues = [[orderPId,request.wagesName,request.atype,request.content,getValue(request.rate),getValue(request.weight),request.amountType,getValue(request.amount),request.paymentMode]];
+            var trackValues = [[orderPId,request.wagesName,request.atype,request.content,getValue(request.rate),getValue(request.weight),amountType,getValue(request.amount),request.paymentMode]];
             const [statusTrack] = await pool.query(trackOrderQuery, [trackValues], function (err, result) {
             if (err) throw err;
                 return result.affectedRows;

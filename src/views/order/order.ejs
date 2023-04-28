@@ -98,10 +98,10 @@
                         <%= stocks[idx].OLD_ITEM_AMT %>
                       </td>
                       <td>
-                        <%= new Date(stocks[idx].CREATED_ON).toJSON().slice(0,10) %>
+                        <%= new Date(stocks[idx].CREATED_ON).toString().slice(0,25) %>
                       </td>
                       <td>
-                        <%= new Date(stocks[idx].DELIVERED_ON).toJSON().slice(0,10)%>
+                        <%= new Date(stocks[idx].DELIVERED_ON).toString().slice(0,25) %>
                       </td>
                       <td>
                         <% if(stocks[idx].STATUS==1) { %>
@@ -256,8 +256,9 @@
                             required>
                             <option value="0">None</option>
                             <option value="1">Cash</option>
-                            <option value="2">GPay</option>
-                            <option value="3">PhonePe</option>
+                            <option value="2">E-Transfer</option>
+                            <option value="3">Card</option>
+                            <option value="4">UPI</option>
                           </select>
                         </div>
                       </div>

@@ -53,6 +53,7 @@
                     <% if(stockTypeId == 2 || stockTypeId == 3){ %>  
                       <th>Name</th>
                       <th>Mobile</th>
+                      <th>Order</th>
                     <% } %>
                     <th>Weight</th>
                     <th>Created On</th>
@@ -74,12 +75,13 @@
                       <% if(stocks[idx].STOCK_TYPE_ID == 2 || stocks[idx].STOCK_TYPE_ID == 3){ %>  
                         <td> <%= stocks[idx].NAME %></td>
                         <td> <%= stocks[idx].MOBILE %></td>
+                        <td><a href="vieworderdet?o=<%= stocks[idx].ORDER_NO %>"> <%= stocks[idx].ORDER_NO %></a></td>
                       <% } %>
                       <td>
                         <%= stocks[idx].WEIGHT %> grams
                       </td>
                       <td>
-                        <%= new Date(stocks[idx].CREATED_ON).toJSON().slice(0,10) %>
+                        <%= new Date(stocks[idx].CREATED_ON).toString().slice(0,25) %>
                       </td>
                     </tr>
                     <% } } %>

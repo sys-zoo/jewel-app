@@ -114,10 +114,10 @@ export const viewStockHis = async (req, res) => {
         var userId = req.query.u;
         var userInfo = localStorage.getItem('userInfo');
         var userInfoData = JSON.parse(userInfo);
-        var query = "SELECT * FROM JWL_STOCK_HIS SH JOIN JWL_USER USER ON SH.USER_ID=USER.USER_ID WHERE SH.STOCK_TYPE_ID = ? ORDER BY SH.CREATED_ON DESC";
+        var query = "SELECT SH.*,USER.*,JO.ORDER_NO FROM JWL_STOCK_HIS SH JOIN JWL_USER USER ON SH.USER_ID=USER.USER_ID LEFT JOIN JWL_ORDER JO ON SH.ORDER_ID=JO.ORDER_ID WHERE SH.STOCK_TYPE_ID = ? ORDER BY SH.CREATED_ON DESC";
         var queryParam = [stockTypeId];
         if(stockTypeId!=1){
-            query = "SELECT * FROM JWL_STOCK_HIS SH JOIN JWL_USER USER ON SH.USER_ID=USER.USER_ID WHERE SH.STOCK_TYPE_ID = ? AND SH.USER_ID = ? ORDER BY SH.CREATED_ON DESC";
+            query = "SELECT SH.*,USER.*,JO.ORDER_NO FROM JWL_STOCK_HIS SH JOIN JWL_USER USER ON SH.USER_ID=USER.USER_ID LEFT JOIN JWL_ORDER JO ON SH.ORDER_ID=JO.ORDER_ID WHERE SH.STOCK_TYPE_ID = ? AND SH.USER_ID = ? ORDER BY SH.CREATED_ON DESC";
             queryParam.push(userId);
         }
         try {

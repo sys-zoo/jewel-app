@@ -165,7 +165,6 @@ BEGIN
 		UPDATE JWL_USER SET INSTOCK_WEIGHT =  NEW.WEIGHT + existUserInStockWeight WHERE USER_ID = NEW.USER_ID;
 	ELSEIF NEW.STOCK_TYPE_ID =3 THEN
 		UPDATE JWL_STOCK SET RECEIVED_WEIGHT = NEW.WEIGHT + existReceivedWeight, OUTSTOCK_WEIGHT=existOutStockWeight-NEW.WEIGHT;
-		UPDATE JWL_USER SET INSTOCK_WEIGHT = existUserInStockWeight-NEW.WEIGHT, OUTSTOCK_WEIGHT =  NEW.WEIGHT + existUserOutStockWeight WHERE USER_ID = NEW.USER_ID;
 	END IF;  
 END;
 $$
@@ -219,3 +218,9 @@ BEGIN
    END IF;
 END;
 $$
+
+--<option value="0">None</option>
+--<option value="1">Cash</option>
+--<option value="2">E-Transfer</option>
+--<option value="3">Card</option>
+--<option value="4">UPI</option>
