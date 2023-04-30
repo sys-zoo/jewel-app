@@ -8,17 +8,18 @@ import {
 var localStorage = new LocalStorage('./data');
 export const addStock = async (req, res) => {
     console.info("Stock Type : Enter");
-    var isLogin = localStorage.getItem('isLogin');
+    var isLogin = req.session.isLogin;
+    var name = req.session.userName;
     if (isLogin == undefined || isLogin == null || isLogin == '0') {
         res.redirect('/login?err=Session expired!!!');
         res.end();
     } else {
         try {
-            var userInfo = localStorage.getItem('userInfo');
-            var userInfoData = JSON.parse(userInfo);
             var request = req.body;
             var dbStatus = 0;
             var err = "Success";
+            var menuActive = req.query.m;
+            localStorage.setItem('menuActive',menuActive);
             if (request) {
                 if (request.weight <= 0) {
                     err = "Please check your input. Because Weight should not be less or equal to zero";
@@ -63,7 +64,7 @@ export const addStock = async (req, res) => {
                     }
                 }
                 console.info("Status :" + dbStatus);
-                res.redirect('/viewStock?status=' + err);
+                res.redirect('/viewStock?status=' + err + "&m=" + menuActive);
             }
 
         } catch (e) {
@@ -73,20 +74,28 @@ export const addStock = async (req, res) => {
     }
 };
 export const viewStock = async (req, res) => {
-    var isLogin = localStorage.getItem('isLogin');
+    var isLogin = req.session.isLogin;
+    var name = req.session.userName;
     console.info(isLogin);
     if (isLogin == undefined || isLogin == null || isLogin == '0') {
         res.redirect('/login?err=Session expired!!!');
         res.end();
     } else {
-        var userInfo = localStorage.getItem('userInfo');
-        var userInfoData = JSON.parse(userInfo);
         var status = req.query.status;
+        var menuActive = req.query.m;
         try {
             const [rows] = await pool.query('SELECT * FROM JWL_STOCK', [], (err, rows) => {
                 return rows;
             });
-
+            const [balancerows] = await pool.query('SELECT * FROM JWL_BALANCE where date(UPDATED_ON)=CURDATE()', [], (err, balancerows) => {
+                return balancerows;
+            });
+            const [allbalancerows] = await pool.query('select amount_type,sum(amount) as amount from jwl_order_track where amount_type in (1,2) and date(created_on)=curdate() group by amount_type', [], (err, balancerows) => {
+                return balancerows;
+            });
+            if(balancerows == undefined || balancerows.length<=0 || balancerows[0].BALANCE<=0){
+                status = "Please update the Open Balance on Today " + new Date();
+            }
             const [userrows] = await pool.query('SELECT NAME,USER_ID FROM JWL_USER WHERE IS_GS=1', [], (err, userrows) => {
                 return userrows;
             });
@@ -95,7 +104,10 @@ export const viewStock = async (req, res) => {
                 users : userrows,
                 status: status,
                 rowCount: 0,
-                userInfoData: userInfoData
+                name: name,
+                menuActive : menuActive,
+                balancerows : balancerows,
+                allbalancerows : allbalancerows
             });
             res.end();
         } catch (e) {
@@ -105,15 +117,15 @@ export const viewStock = async (req, res) => {
     }
 };
 export const viewStockHis = async (req, res) => {
-    var isLogin = localStorage.getItem('isLogin');
+    var isLogin = req.session.isLogin;
+    var name = req.session.userName;
     if (isLogin == undefined || isLogin == null || isLogin == '0') {
         res.redirect('/login?err=Session expired!!!');
         res.end();
     } else {
         var stockTypeId = req.query.st;
+        var menuActive = req.query.m;
         var userId = req.query.u;
-        var userInfo = localStorage.getItem('userInfo');
-        var userInfoData = JSON.parse(userInfo);
         var query = "SELECT SH.*,USER.*,JO.ORDER_NO FROM JWL_STOCK_HIS SH JOIN JWL_USER USER ON SH.USER_ID=USER.USER_ID LEFT JOIN JWL_ORDER JO ON SH.ORDER_ID=JO.ORDER_ID WHERE SH.STOCK_TYPE_ID = ? ORDER BY SH.CREATED_ON DESC";
         var queryParam = [stockTypeId];
         if(stockTypeId!=1){
@@ -127,8 +139,9 @@ export const viewStockHis = async (req, res) => {
             res.render("stock/stockView", {
                 stocks: rows,
                 rowCount: 0,
-                userInfoData: userInfoData,
-                stockTypeId: stockTypeId
+                name: name,
+                stockTypeId: stockTypeId,
+                menuActive : menuActive
             });
             res.end();
         } catch (e) {
@@ -138,14 +151,14 @@ export const viewStockHis = async (req, res) => {
     }
 };
 export const viewGoldStockHis = async (req, res) => {
-    var isLogin = localStorage.getItem('isLogin');
+    var isLogin = req.session.isLogin;
+    var name = req.session.userName;
     if (isLogin == undefined || isLogin == null || isLogin == '0') {
         res.redirect('/login?err=Session expired!!!');
         res.end();
     } else {
         var stockTypeId = req.query.st;
-        var userInfo = localStorage.getItem('userInfo');
-        var userInfoData = JSON.parse(userInfo);
+        var menuActive = req.query.m;
         try {
             const [userrows] = await pool.query('SELECT * FROM JWL_USER WHERE IS_GS = 1 ORDER BY CREATED_ON DESC', [], (err, userrows) => {
                 return userrows;
@@ -153,8 +166,9 @@ export const viewGoldStockHis = async (req, res) => {
             res.render("stock/stockgoldview", {
                 users : userrows,
                 rowCount: 0,
-                userInfoData: userInfoData,
-                stockTypeId: stockTypeId
+                name: name,
+                stockTypeId: stockTypeId,
+                menuActive : menuActive
             });
             res.end();
         } catch (e) {
@@ -163,4 +177,35 @@ export const viewGoldStockHis = async (req, res) => {
         res.end();
     }
 };
+export const updateBalance = async (req, res) => {
+    console.info("Stock Type : Enter");
+    var isLogin = req.session.isLogin;
+    var name = req.session.userName;
+    if (isLogin == undefined || isLogin == null || isLogin == '0') {
+        res.redirect('/login?err=Session expired!!!');
+        res.end();
+    } else {
+        try {
+            var request = req.body;
+            var dbStatus = 0;
+            var err = "Success";
+            var menuActive = req.query.m;
+            if (request) {
+                var sql = "INSERT INTO JWL_BALANCE_HIS (BALANCE_TYPE,BALANCE) VALUES ?";
+                var values = [[1, request.balance]];
+                const [status] = await pool.query(sql, [values], function (err, result) {
+                    if (err) throw err;
+                    return result.affectedRows;
+                });
+                if(status==0){
+                    err = "Error";
+                }
+                res.redirect('/viewStock?m=1&status=' + err + "&m=" + menuActive);
+            }
+        } catch (e) {
+            console.log(e);
+        }
+    }
+};
+
 

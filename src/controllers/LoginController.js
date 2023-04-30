@@ -8,8 +8,8 @@ import {
 var localStorage = new LocalStorage('./data');
 export const renderLogin = async (req, res) => {
 	var error = req.query.err;
-    localStorage.setItem('isLogin', 0);
-	localStorage.setItem('userInfo', undefined);
+ 	req.session.isLogin = 0;
+	req.session.name = '';
     res.render("login", {error : error
     });
 };
@@ -22,9 +22,8 @@ export const validateUser = async (req, res) => {
 		});
 		if(rows && rows.length>0){
 			var userInfo = rows[0];
-			localStorage.setItem('isLogin', 1);
-			localStorage.setItem('userInfo', JSON.stringify(userInfo));
-			console.info(JSON.stringify(userInfo));
+			req.session.userName = userInfo.NAME;
+			req.session.isLogin = 1;
 			res.redirect('/');
 		}else{
 			res.redirect('/login?err=invalid credentials');
@@ -53,7 +52,7 @@ export const addUser = async (req, res) => {
 			if (status == 0) {
 				err = "Unable to add Gold Smith";
 			}
-			res.redirect('/viewStock?status=' + err);
+			res.redirect('/viewStock?m=1&status=' + err);
 		}
 	} catch(e) {
         console.log(e);

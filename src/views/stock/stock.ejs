@@ -1,71 +1,177 @@
 <%- include("../partials/_header") %>
-  <main id="main" class="main">
-    <div class="pagetitle">
-      <h1><i class="bi bi-bank"></i>&nbsp;Stock Overview</h1>
-      <nav>
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="/">Home</a></li>
-          <li class="breadcrumb-item active">Stock Overview</li>
-        </ol>
-      </nav>
-    </div><!-- End Page Title -->
 
+  <main id="main" class="main">
+    <div class="row">
+        <div class="col-xxl-6 col-md-6 d-flex justify-content-start">
+          <div class="pagetitle">
+            <h1><i class="bi bi-bank"></i>&nbsp;Stock Overview</h1>
+            <nav>
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item active">Stock Overview</li>
+              </ol>
+            </nav>
+          
+          </div><!-- End Page Title -->
+        </div>
+        <div class="col-xxl-6 col-md-6 d-flex justify-content-end">
+          <div class="pagetitle">
+            <h1 class="text-success"><i class="bi bi-cash"></i>&nbsp;Current Balance : ₹ <%= (((balancerows && balancerows.length>0)?balancerows[0].BALANCE:0) + ((allbalancerows && allbalancerows.length>0)?allbalancerows[0].amount:0) - ((allbalancerows && allbalancerows.length>1)?allbalancerows[1].amount:0)).toFixed(2)%></h1>
+          </div>
+        </div>
+      </div>
     <section class="section dashboard">
       <div class="row">
-        <div class="col-xxl-12 col-md-8 d-flex justify-content-start">
-          <h4 class="text-danger"> <i class="bi bi-x-circle"></i> &nbsp;<%= status %>
+        <div class="col-xxl-12 col-md-6 d-flex justify-content-start">
+          <h4 class="text-primary">
+            <% if(status) { %>
+            <i class="bi bi-info-circle"></i>&nbsp;<%= status %>
+            <% } %>
           </h4>
         </div>
-        <div class="col-xxl-12 col-md-4 d-flex justify-content-end">
-
-          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addgoldsmithModal">
+        <div class="col-xxl-12 col-md-6 d-flex justify-content-end">
+          <button type="button" class="btn btn-primary btn-sprimary" data-bs-toggle="modal"
+          data-bs-target="#balanceModal">
+          <i class="bi bi-cash"></i>&nbsp;Update Balance
+        </button>&nbsp;&nbsp;
+          <button type="button" class="btn btn-primary btn-sprimary" data-bs-toggle="modal"
+            data-bs-target="#addgoldsmithModal">
             <i class="bi bi-person-plus-fill"></i>&nbsp;Add Gold Smith
           </button>&nbsp;&nbsp;
-          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#basicModal">
+          <button type="button" class="btn btn-primary btn-sprimary" data-bs-toggle="modal"
+            data-bs-target="#basicModal">
             <i class="bi bi-shield-plus"></i>&nbsp;Add In-Stock
           </button>&nbsp;&nbsp;
         </div>
       </div>
-      <hr>
-      <div class="row">
-        <div class="col-lg-12">
-          <div class="row">
-            <div class="col-xxl-12 col-md-12">
-              <table id="example" class="ui celled table" style="width:100%">
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>Instock Weight</th>
-                    <th>Outstock Weight</th>
-                    <th>Received Weight</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <% if(stocks) { for(var idx=0; idx<stocks.length; idx++) { %>
-                    <tr>
-                      <td>
-                        <%= parseInt((idx+1)) %>
-                      </td>
-                      <td>
-                        <%= stocks[idx].INSTOCK_WEIGHT %> grams <a href="viewStockHis?st=1"><i
-                              class="fa fa-external-link"></i>View</a>
-                      </td>
-                      <td>
-                        <%= stocks[idx].OUTSTOCK_WEIGHT %> grams <a href="viewgoldstockhis?st=2"><i
-                              class="fa fa-external-link"></i>View</a>
-                      </td>
-                      <td>
-                        <%= stocks[idx].RECEIVED_WEIGHT %> grams <a href="viewgoldstockhis?st=3"><i
-                              class="fa fa-external-link"></i>View</a>
-                      </td>
+      <br>
+      <br>
+      <section class="section dashboard">
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="row">
+              <div class="col-xxl-4 col-md-4">
+                <div class="card info-card sales-card">
+                  <div class="card-body">
+                    <h5 class="card-title">In-Stock </h5>
+                    <div class="d-flex align-items-center">
+                      <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                        <i class="bi bi-cart"></i>
+                      </div>
+                      <div class="ps-3">
+                        <h6>
+                          <i class="bi bi-compass"></i>&nbsp;<%= stocks[0].INSTOCK_WEIGHT %></b> <span class="text-muted small pt-1 fw-bold"><small>grams</small></span>
+                        </h6>
+                        <a href="viewStockHis?st=1&m=2"><span class="text-muted small pt-1 fw-bold">View
+                            History</span></a>
 
-                    </tr>
-                    <% } } %>
-              </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-xxl-4 col-md-4">
+                <div class="card info-card sales-card">
+                  <div class="card-body">
+                    <h5 class="card-title">Out-Stock </h5>
+                    <div class="d-flex align-items-center">
+                      <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                        <i class="bi bi-caret-right"></i>
+                      </div>
+                      <div class="ps-3">
+                        <h6>
+                          <i class="bi bi-compass"></i>&nbsp;<%= stocks[0].OUTSTOCK_WEIGHT %></b> <span class="text-muted small pt-1 fw-bold"><small>grams</small></span>
+                        </h6>
+                        <a href="viewgoldstockhis?st=2&m=2"><span class="text-muted small pt-1 fw-bold">View
+                            History</span></a>
+
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-xxl-4 col-md-4">
+                <div class="card info-card sales-card">
+                  <div class="card-body">
+                    <h5 class="card-title">Received Stock </h5>
+                    <div class="d-flex align-items-center">
+                      <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                        <i class="bi bi-caret-left"></i>
+                      </div>
+                      <div class="ps-3">
+                        <h6>
+                          <i class="bi bi-compass"></i>&nbsp;<%= stocks[0].RECEIVED_WEIGHT %></b> <span class="text-muted small pt-1 fw-bold"><small>grams</small></span>
+                        </h6>
+                        <a href="viewgoldstockhis?st=3&m=3"><span class="text-muted small pt-1 fw-bold">View
+                            History</span></a>
+
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-xxl-4 col-md-4">
+                <div class="card info-card sales-card <%= (balancerows && balancerows.length>0 && parseFloat(balancerows[0].BALANCE>0))?'':'border border-danger' %>">
+                  <div class="card-body">
+                    <h5 class="card-title">Open Balance </h5>
+                    <div class="d-flex align-items-center">
+                      <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                        <i class="bi bi-cash-coin"></i>
+                      </div>
+                      <div class="ps-3">
+                        <h6>
+                          ₹ <%= ((balancerows && balancerows.length>0)?balancerows[0].BALANCE:0).toFixed(2) %></b> <span class="text-muted small pt-1 fw-bold"></span>
+                        </h6>
+                       
+
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-xxl-4 col-md-4">
+                <div class="card info-card sales-card">
+                  <div class="card-body">
+                    <h5 class="card-title">In Balance </h5>
+                    <div class="d-flex align-items-center">
+                      <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                        <i class="bi bi-cash"></i>
+                      </div>
+                      <div class="ps-3">
+                        <h6>
+                          ₹ <%= ((allbalancerows && allbalancerows.length>0)?allbalancerows[0].amount:0).toFixed(2) %></b> <span class="text-muted small pt-1 fw-bold"></span>
+                        </h6>
+                      
+
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-xxl-4 col-md-4">
+                <div class="card info-card sales-card">
+                  <div class="card-body">
+                    <h5 class="card-title">Out Balance </h5>
+                    <div class="d-flex align-items-center">
+                      <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                        <i class="bi bi-cash-stack"></i>
+                      </div>
+                      <div class="ps-3">
+                        <h6>
+                          ₹ <%= ((allbalancerows && allbalancerows.length>1)?allbalancerows[1].amount:0).toFixed(2) %></b> <span class="text-muted small pt-1 fw-bold"></span>
+                        </h6>
+                       
+
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </section>
+     
       <div class="modal fade" id="basicModal" tabindex="-1">
         <div class="modal-dialog">
           <div class="modal-content">
@@ -78,9 +184,6 @@
 
                 <div class="card">
                   <div class="card-body">
-
-
-                    <!-- No Labels Form -->
                     <div class="row g-3">
                       <div class="col-md-3">
                         <h4>Stock Type</h4>
@@ -101,7 +204,7 @@
                       <div class="col-md-9">
                         <div class="input-group mb-3">
                           <input type="number" placeholder="Material Weight" class="form-control"
-                            aria-label="Amount (to the nearest dollar)" name="weight" id="weight">
+                          min="0" max="1000000000000" aria-label="Amount (to the nearest dollar)" name="weight" id="weight">
                           <span class="input-group-text">grams</span>
                         </div>
                       </div>
@@ -113,15 +216,16 @@
                       </div>
                       <div class="col-md-7" id="divName">
                         <div class="input-group mb-3">
-                          <select name="userid" id="userid" class="form-select"
-                            aria-label="Default select example">
-                              <% if(users) { for(var idx=0; idx<users.length; idx++) { %>
-                                <option value="<%= users[idx].USER_ID %>"><%= users[idx].NAME %></option>
+                          <select name="userid" id="userid" class="form-select" aria-label="Default select example">
+                            <% if(users) { for(var idx=0; idx<users.length; idx++) { %>
+                              <option value="<%= users[idx].USER_ID %>">
+                                <%= users[idx].NAME %>
+                              </option>
                               <% } } %>
                           </select>
                         </div>
                       </div>
-                      
+
                       <div class="col-md-2" id="divAdd">
                         <div class="input-group mb-3">
                           <button type="button" class="btn btn-primary" data-bs-toggle="modal"
@@ -130,7 +234,7 @@
                           </button>
                         </div>
                       </div>
-                     
+
                     </div><!-- End No Labels Form -->
 
                   </div>
@@ -176,7 +280,7 @@
                         <div class="input-group mb-3">
                           <span class="input-group-text">Mobile</span>
                           <input placeholder="Mobile Number" class="form-control" aria-label="" maxlength="10"
-                            name="gmobile" id="gmobile" type="number" maxlength="10"
+                          min="0" max="1000000000000" name="gmobile" id="gmobile" type="number" maxlength="10"
                             oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);">
                         </div>
                       </div>
@@ -195,18 +299,59 @@
           </div>
         </div>
       </div><!-- End Basic Modal-->
+
+      <div class="modal fade" id="balanceModal" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="card-title">Add Open Balance</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="/updatebalance" method="POST">
+              <div class="modal-body">
+
+                <div class="">
+                  <div class="">
+
+
+                    <!-- No Labels Form -->
+                    <div class="row g-3">
+
+                      <div class="col-md-12" >
+                        <div class="input-group mb-3">
+                          <span class="input-group-text">Current Balance</span>
+                          <input type="number" placeholder="Balance" class="form-control"
+                          min="0" max="1000000000000"  aria-label="Amount (to the nearest dollar)" name="balance" id="balance">
+
+                        </div>
+                      </div>
+                     
+                    </div><!-- End No Labels Form -->
+
+                  </div>
+                </div>
+
+
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Update</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div><!-- End Basic Modal-->
     </section>
 
   </main><!-- End #main -->
   <script>
 
     $('#divGoldSmith').hide();
-   $('#stockType').change(function () {
+    $('#stockType').change(function () {
       if ($('#stockType').val() != '1') {
-     
         $('#divGoldSmith').show();
       } else {
-      
+
         $('#divGoldSmith').hide();
       }
     });

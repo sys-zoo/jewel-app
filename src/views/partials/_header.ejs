@@ -39,24 +39,27 @@
   <!-- ======= Header ======= -->
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">ARC</a>
+      <div class="pagetitle">
+        <h1>ARC</h1>
+      </div>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse d-flex justify-content-end" id="navbarNavDropdown">
         <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="/viewbasicorder">Order</a>
+            <a class="nav-link nav-normal <%= (menuActive==1)?'nav-active':'' %>" id="orderOrder" href="/viewbasicorder?m=1">Order</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/viewStock">Stock</a>
+            <a class="nav-link nav-normal <%= (menuActive==2)?'nav-active':'' %>" id="orderStock" href="/viewStock?m=2">Stock</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/viewcash">Cash Ledger</a>
+            <a class="nav-link nav-normal <%= (menuActive==3)?'nav-active':'' %>" id="orderCash" href="/viewcash?m=3">Cash Ledger</a>
           </li>
+         
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              <span class="text-primary"><%= userInfoData.NAME %></span>
+             <i class="bi bi-person-circle bi-2x"></i> <span class="text-primary"><%= name %></span>
             </a>
             <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
               <li><a class="dropdown-item" href="login">Logout</a></li>
@@ -82,6 +85,7 @@
   <script src="/assets/js/jquery.dataTables.min.js"></script>
   <script src="/assets/js/dataTables.semanticui.min.js"></script>
   <script src="/assets/js/semantic.min.js"></script>
+  <script src="/assets/js/moment.min.js"></script>
   <script src="/assets/vendor/tinymce/tinymce.min.js"></script>
   <script src="/assets/vendor/php-email-form/validate.js"></script>
 

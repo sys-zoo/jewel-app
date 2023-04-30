@@ -56,7 +56,7 @@ h6 {
   font-size: 24px;
   margin-bottom: 0;
   font-weight: 600;
-  color: #012970;
+  color: #45587a;
 }
 
 /*--------------------------------------------------------------
@@ -245,7 +245,7 @@ h6 {
   padding: 20px 0 15px 0;
   font-size: 18px;
   font-weight: 500;
-  color: #012970;
+  color: #45587a;
   font-family: "Poppins", sans-serif;
 }
 
@@ -291,7 +291,7 @@ h6 {
 }
 
 .accordion-button:not(.collapsed) {
-  color: #012970;
+  color: #45587a;
   background-color: #f6f9ff;
 }
 
@@ -381,7 +381,7 @@ h6 {
 .logo span {
   font-size: 26px;
   font-weight: 700;
-  color: #012970;
+  color: #45587a;
   font-family: "Nunito", sans-serif;
 }
 
@@ -400,7 +400,7 @@ h6 {
   font-size: 32px;
   padding-left: 10px;
   cursor: pointer;
-  color: #012970;
+  color: #45587a;
 }
 
 .header .search-bar {
@@ -437,7 +437,7 @@ h6 {
 .header .search-form input {
   border: 0;
   font-size: 14px;
-  color: #012970;
+  color: #45587a;
   border: 1px solid rgba(1, 41, 112, 0.2);
   padding: 7px 38px 7px 8px;
   border-radius: 3px;
@@ -460,7 +460,7 @@ h6 {
 }
 
 .header .search-form button i {
-  color: #012970;
+  color: #45587a;
 }
 
 /*--------------------------------------------------------------
@@ -477,13 +477,13 @@ h6 {
 
 .header-nav .nav-icon {
   font-size: 22px;
-  color: #012970;
+  color: #45587a;
   margin-right: 25px;
   position: relative;
 }
 
 .header-nav .nav-profile {
-  color: #012970;
+  color: #45587a;
 }
 
 .header-nav .nav-profile img {
@@ -707,7 +707,7 @@ h6 {
 }
 
 .sidebar-nav .nav-link.collapsed {
-  color: #012970;
+  color: #45587a;
   background: #fff;
 }
 
@@ -744,7 +744,7 @@ h6 {
   align-items: center;
   font-size: 14px;
   font-weight: 600;
-  color: #012970;
+  color: #45587a;
   transition: 0.3;
   padding: 10px 0 10px 40px;
   transition: 0.3s;
@@ -814,7 +814,7 @@ h6 {
 
 .dashboard .info-card h6 {
   font-size: 28px;
-  color: #012970;
+  color: #45587a;
   font-weight: 700;
   margin: 0;
   padding: 0;
@@ -910,7 +910,7 @@ h6 {
 }
 
 .dashboard .news h4 a {
-  color: #012970;
+  color: #45587a;
   transition: 0.3s;
 }
 
@@ -982,7 +982,7 @@ h6 {
   background-color: #fff;
   border-radius: 0.25rem;
   text-align: center;
-  color: #012970;
+  color: #45587a;
   padding: 15px 0;
 }
 
@@ -1031,7 +1031,7 @@ h6 {
 }
 
 .profile .profile-card .social-links a:hover {
-  color: #012970;
+  color: #45587a;
 }
 
 .profile .profile-overview .row {
@@ -1040,7 +1040,7 @@ h6 {
 }
 
 .profile .profile-overview .card-title {
-  color: #012970;
+  color: #45587a;
 }
 
 .profile .profile-overview .label {
@@ -1085,7 +1085,7 @@ h6 {
 
 .contact .info-box h3 {
   font-size: 20px;
-  color: #012970;
+  color: #45587a;
   font-weight: 700;
   margin: 20px 0 10px 0;
 }
@@ -1210,7 +1210,7 @@ h6 {
 .error-404 h2 {
   font-size: 24px;
   font-weight: 700;
-  color: #012970;
+  color: #45587a;
   margin-bottom: 30px;
 }
 
@@ -1242,14 +1242,14 @@ h6 {
 
 .footer .copyright {
   text-align: center;
-  color: #012970;
+  color: #45587a;
 }
 
 .footer .credits {
   padding-top: 5px;
   text-align: center;
   font-size: 13px;
-  color: #012970;
+  color: #45587a;
 }
 table, td, th {  
   border: 1px solid #ddd;
@@ -1263,7 +1263,7 @@ table {
 
 th {
   white-space: nowrap;
-  background-color: #012970 !important;
+  background-color: #45587a !important;
   color: #ffffff   !important;
   white-space: nowrap !important;
 }
@@ -1273,9 +1273,31 @@ td {
   vertical-align: top !important;
 }
 .textprimary{
-  color: #012970 !important;
+  color: #45587a !important;
 }
 
 .textprimarybg{
-  background-color: #012970 !important;
+  background-color: #45587a !important;
 }
+
+.nav-active{
+  color: #45587a !important;
+  font-weight: bold !important;
+  text-shadow: #45587a !important;
+  letter-spacing: 1px !important;
+  border-width: 0 0 1px !important;
+  border-style: solid !important;
+  font-size: 13px !important;
+}
+
+.nav-normal{
+  color: #45587a;
+  font-weight: bold;
+  text-shadow: #45587a;
+  font-size: 11px;
+}
+.btn-sprimary{
+  background-color: #45587a !important;
+}
+
+

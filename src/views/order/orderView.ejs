@@ -6,13 +6,13 @@
 </style>
   <main id="main" class="main">
     <div class="pagetitle">
-      <h1><i class="bi bi-inboxes-fill"></i>&nbsp;Order Details <a href="/viewOrder"><b class="text-primary">[ORDER :
-            <%= orderNumber %> ]
+      <h1><i class="bi bi-inboxes-fill"></i>&nbsp;Order Details <a href="/viewbasicorder"><b class="text-primary">Order :
+            <%= orderNumber %> 
           </b></a></h1>
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="/">Home</a></li>
-          <li class="breadcrumb-item"><a href="/viewOrder">Order Overview</a></li>
+          <li class="breadcrumb-item"><a href="/viewbasicorder">Order Overview</a></li>
           <li class="breadcrumb-item active">Order Details</li>
         </ol>
       </nav>
@@ -77,7 +77,7 @@
                   <% if(orderDetails) { for(var idx=0; idx<orderDetails.length; idx++) { %>
                     <tr>
                       <td>
-                        <%= new Date(orderDetails[idx].CREATED_ON).toString().slice(0,25) %>
+                        <%= new Date(orderDetails[idx].CREATED_ON).toLocaleString() %>
                       </td>
                       <td>
                         <% if(orderDetails[idx].ACTION_TYPE_ID==1) { %>
@@ -98,6 +98,8 @@
                                                       <h3><i class="bi bi-stop-circle-fill text-warning"></i>&nbsp;
                                                         <% }  else if(orderDetails[idx].ACTION_TYPE_ID==9) { %>
                                                         <h3><i class="bi bi-x-circle-fill text-danger"></i>&nbsp;
+                                                          <% }  else if(orderDetails[idx].ACTION_TYPE_ID==10) { %>
+                                                            <h3><i class="bi bi-shield-fill-check text-success"></i>&nbsp;
                                                         <% } %>
                                                           <%= orderDetails[idx].ACTION_TYPE %>
                                                       </h3>
@@ -127,12 +129,19 @@
                                                                 </b></td>
                                                             </tr>
 
-                                                            <% } else if(orderDetails[idx].ACTION_TYPE_ID==3){ %><!--Advance Amount-->
+                                                            <% } else if(orderDetails[idx].ACTION_TYPE_ID==3  || orderDetails[idx].ACTION_TYPE_ID==10){ %><!--Advance Amount-->
                                                               <tr>
                                                                 <td colspan="2" class="text-success"><b>Payment
                                                                     details</b></td>
                                                               </tr>
-
+                                                              <% if(orderDetails[idx].ACTION_TYPE_ID==10){ %>
+                                                                <tr>
+                                                                  <td><b>Discount Amount</b></td>
+                                                                  <td><b>
+                                                                      <%= orderDetails[idx].DISCOUNT_AMT %>
+                                                                    </b></td>
+                                                                </tr>
+                                                              <% } %>
                                                               <tr>
                                                                 <td><b>Amount</b></td>
                                                                 <td><b>
@@ -288,7 +297,7 @@
                         <div class="input-group mb-3">
                           <span class="input-group-text">Item Weight</span>
                           <input type="number" placeholder="Weight" class="form-control"
-                            aria-label="Amount (to the nearest dollar)" name="weight" id="weight">
+                          min="0" max="1000000000000" aria-label="Amount (to the nearest dollar)" name="weight" id="weight">
                           <span class="input-group-text">grams</span>
                         </div>
                       </div>
@@ -316,19 +325,61 @@
                           </select>
                         </div>
                       </div>
-                     
                       <div class="col-md-4">
                         <div class="input-group mb-3">
                           <span class="input-group-text">Rs</span>
                           <input type="number" placeholder="Amount" class="form-control"
-                            aria-label="Amount (to the nearest dollar)" name="amount" id="amount">
+                          min="0" max="1000000000000" aria-label="Amount (to the nearest dollar)" name="amount" id="amount">
                         </div>
                       </div>
-                      <div class="col-md-12">
+                    
+                    </div>
+                    <div id="finalSettlement" class="row g-3">
+                     
+                      <div class="col-md-4" >
                         <div class="input-group mb-3">
-                          <textarea placeholder="Content" class="form-control"
-                            aria-label="Amount (to the nearest dollar)" name="content" id="content" rows="5"
-                            cols="255"></textarea>
+                          <span class="input-group-text">Item Amount</span>
+                          <input type="number" placeholder="Item Amount" class="form-control"
+                          min="0" max="1000000000000"  aria-label="Amount (to the nearest dollar)" name="imount" id="iamount" value="<%= itemAmount %>" readonly>
+                        </div>
+                      </div>
+                      <div class="col-md-4" id="divAdvanceAmount">
+                        <div class="input-group mb-3">
+                          <span class="input-group-text">Advance Amount</span>
+                          <input type="number" placeholder="Advance Amount" class="form-control"
+                          min="0" max="1000000000000" aria-label="Amount (to the nearest dollar)" name="aamount" id="aamount" value="<%= advanceAmount %>" readonly>
+                        </div>
+                      </div>
+                      <div class="col-md-4"  id="divDiscount">
+                        <div class="input-group mb-3">
+                          <span class="input-group-text">Discount Amt</span>
+                          <input type="number" placeholder="Discount" class="form-control"
+                          min="0" max="1000000000000"  aria-label="Amount (to the nearest dollar)" name="damount" id="damount">
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="input-group mb-3">
+                          <span class="input-group-text">Payment Mode</span>
+                          <select name="paymentModef" id="paymentModef" class="form-select"
+                            aria-label="Default select example" required>
+                            <option value="0">None</option>
+                            <option value="1">Cash</option>
+                            <option value="2">E-Transfer</option>
+                            <option value="3">Card</option>
+                            <option value="4">UPI</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-md-4 d-flex justify-content-end">
+                        <div class="input-group" style="padding-top: 5px; text-align: right !important;" >
+                            <h4>Remaining Amount Is :</h4>
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="input-group mb-3">
+                          <span class="input-group-text">Rs</span>
+                          <input type="number" placeholder="Balance Amount" class="form-control text-danger" min="0" max="1000000000000"
+                          min="0" max="1000000000000" aria-label="Amount (to the nearest dollar)" name="bamount" id="bamount" style="font-size: 18px;font-weight: bold;" readonly>
                         </div>
                       </div>
                     </div>
@@ -352,6 +403,8 @@
     $('#gramMode').hide();
     $('#wagesName').hide();
     $('#paymentMode').hide();
+    $('#finalSettlement').hide();
+    
     $('#atype').change(function () {
       if ($('#atype').val() == '3' || $('#atype').val() == '5' || $('#atype').val() == '6') {
         if ($('#atype').val() == '5') {
@@ -363,32 +416,35 @@
         $('#gramMode').show();
         $('#paymentMode').hide();
         $('#wagesName').hide();
+      } else if ($('#atype').val() == '10') {
+        $('#gramMode').hide();
+        $('#wagesName').hide();
+        $('#paymentMode').hide();
+        $('#finalSettlement').show();
       } else {
         $('#gramMode').hide();
         $('#paymentMode').hide();
         $('#wagesName').hide();
+        $('#finalSettlement').hide();
       }
     });
-    $('#weight').on('input', function (e) {
-      var weight = $("#weight").val();
-      var rate = $("#rate").val();
-      calculateAmount(weight, rate);
+    calculateBalanceAmount();
+    $('#damount').on('input', function (e) {
+      calculateBalanceAmount();
     });
-    $('#rate').on('input', function (e) {
-      var weight = $("#weight").val();
-      var rate = $("#rate").val();
-      calculateAmount(weight, rate);
-    });
-    function calculateAmount(weight, rate) {
-      if (weight == null || weight == undefined) {
-        weight = 0;
+    function calculateBalanceAmount() {
+      var itemAmount = isNull($("#iamount").val());
+      var advanceAmount = isNull($("#aamount").val());
+      var discountAmount = isNull($("#damount").val());
+      var balanceAmount = (parseFloat(itemAmount) - parseFloat(advanceAmount)) - parseFloat(discountAmount);
+      console.info(balanceAmount);
+      if(balanceAmount == undefined || balanceAmount == '' || balanceAmount == NaN){
+        balanceAmount = 0;
       }
-      if (rate == null || rate == undefined) {
-        rate = 0;
-      }
-      var amount = weight * rate;
-      $("#purchaseAmount").val(amount);
-
+      $("#bamount").val(parseFloat(balanceAmount).toFixed(2));
     }
+    function isNull(value){
+     return (value == null || value == undefined || value == NaN || value == '')?0:value;
+   }
   </script>
   <%- include("../partials/_footer") %>

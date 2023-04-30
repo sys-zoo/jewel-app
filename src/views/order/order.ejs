@@ -40,7 +40,7 @@
                     <th>Item Type</th>
                     <th>Rate</th>
                     <th>Weight</th>
-                    <th>Purchase Amt</th>
+                    <th>Item Amt</th>
                     <th>Advance Amt</th>
                     <th>Old Item Type</th>
                     <th>Old Rate</th>
@@ -80,7 +80,7 @@
                         <%= stocks[idx].WEIGHT %>
                       </td>
                       <td>
-                        <%= stocks[idx].PURCHASE_AMT %>
+                        <%= stocks[idx].ITEM_AMT %>
                       </td>
                       <td>
                         <%= stocks[idx].ADVANCE_AMT %>
@@ -98,10 +98,10 @@
                         <%= stocks[idx].OLD_ITEM_AMT %>
                       </td>
                       <td>
-                        <%= new Date(stocks[idx].CREATED_ON).toString().slice(0,25) %>
+                        <%= new Date(stocks[idx].CREATED_ON).toLocaleString() %>
                       </td>
                       <td>
-                        <%= new Date(stocks[idx].DELIVERED_ON).toString().slice(0,25) %>
+                        <%= new Date(stocks[idx].DELIVERED_ON).toLocaleString() %>
                       </td>
                       <td>
                         <% if(stocks[idx].STATUS==1) { %>
@@ -153,8 +153,9 @@
                         <div class="input-group mb-3">
                           <select name="orderType" id="orderType" class="form-select" aria-label="Default select example"
                             required>
-                            <option value="0">PURCHASE ORDER</option>
-                            <option value="1">SHOP ORDER</option>
+                            <option value="0">Customer Order</option>
+                            <option value="1">Shop Order</option>
+                            <option value="2">Miscellaneous Order</option>
                           </select>
                         </div>
                       </div>
@@ -167,7 +168,7 @@
                       <div class="col-md-2">
                         <div class="input-group mb-3">
                           <input placeholder="Mobile Number" class="form-control" aria-label="" maxlength="10"
-                            name="mobile" id="mobile" type="number" maxlength="10" required  oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" >
+                          min="0" max="1000000000000" name="mobile" id="mobile" type="number" maxlength="10" required  oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" >
                       </div>
                       </div>
                       <div class="col-md-5">
@@ -202,7 +203,7 @@
                         <div class="input-group mb-3">
                           <span class="input-group-text">Rs</span>
                           <input type="number" placeholder="Material Amount" class="form-control"
-                            aria-label="Amount (to the nearest dollar)" name="purchaseAmount" id="purchaseAmount"
+                          min="0" max="1000000000000" aria-label="Amount (to the nearest dollar)" name="itemAmount" id="itemAmount"
                             readonly>
                         </div>
                       </div>
@@ -245,7 +246,7 @@
                         <div class="input-group mb-3">
                           <span class="input-group-text">Rs</span>
                           <input type="number" placeholder="Advance Amount" class="form-control"
-                            aria-label="Amount (to the nearest dollar)" name="advanceAmount" id="advanceAmount" value="0.0"
+                          min="0" max="1000000000000" aria-label="Amount (to the nearest dollar)" name="advanceAmount" id="advanceAmount" value="0.0"
                             >
                         </div>
                       </div>
@@ -299,13 +300,13 @@
     $('#weight').on('input', function (e) {
       var weight = $("#weight").val();
       var rate = $("#rate").val();
-      $("#purchaseAmount").val(calculateAmount(weight, rate));
+      $("#itemAmount").val(calculateAmount(weight, rate));
       calculateBalanceAmount();
     });
     $('#rate').on('input', function (e) {
       var weight = $("#weight").val();
       var rate = $("#rate").val();
-      $("#purchaseAmount").val(calculateAmount(weight, rate));
+      $("#itemAmount").val(calculateAmount(weight, rate));
       calculateBalanceAmount();
     });
     $('#oldWeight').on('input', function (e) {
@@ -324,10 +325,10 @@
       calculateBalanceAmount();
     });
     function calculateBalanceAmount() {
-      var purchaseAmount = isNull($("#purchaseAmount").val());
+      var itemAmount = isNull($("#itemAmount").val());
       var oldItemAmount = isNull($("#oldItemAmount").val());
       var advanceAmount = isNull($("#advanceAmount").val());
-      var balanceAmount = (parseFloat(purchaseAmount) - parseFloat(oldItemAmount)) - parseFloat(advanceAmount);
+      var balanceAmount = (parseFloat(itemAmount) - parseFloat(oldItemAmount)) - parseFloat(advanceAmount);
       console.info(balanceAmount);
       if(balanceAmount == undefined || balanceAmount == '' || balanceAmount == NaN){
         balanceAmount = 0;

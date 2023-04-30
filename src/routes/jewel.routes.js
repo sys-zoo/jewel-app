@@ -1,10 +1,10 @@
 import { Router } from "express";
 import { validateUser, renderLogin, addUser } from "../controllers/LoginController.js";
-import { addStock, viewStock, viewStockHis, viewGoldStockHis } from "../controllers/StockController.js";
+import { addStock, viewStock, viewStockHis, viewGoldStockHis, updateBalance } from "../controllers/StockController.js";
 import { addOrder, addOrderInfo, viewOrder, viewOrderDetails, viewBasicOrder, viewCash, assignTo, deleteOrder } from "../controllers/OrderController.js";
 const router = Router();
 
-router.get("/", viewBasicOrder);
+router.get("/", viewStock);
 router.get("/viewStock", viewStock);
 router.get("/viewStockHis", viewStockHis);
 router.get("/viewgoldstockhis", viewGoldStockHis);
@@ -21,4 +21,6 @@ router.post("/adduser", addUser);
 router.post("/neworder", addOrder);
 router.post("/addOrderInfo", addOrderInfo);
 router.post("/assignTo", assignTo);
+router.post("/updatebalance", updateBalance);
+
 export default router;

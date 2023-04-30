@@ -22,7 +22,7 @@
                    var debit_amount = 0.0;
                  
                 if(orders) { for(var idx=0; idx<orders.length; idx++) { %>
-                  <% total_amount = parseFloat(orders[idx].purchase_amt);
+                  <% total_amount = parseFloat(orders[idx].total_amount);
                   credit_amount = 0.0;
                   debit_amount = 0.0;
                   if(orderNo !=orders[idx].order_no) { %>
