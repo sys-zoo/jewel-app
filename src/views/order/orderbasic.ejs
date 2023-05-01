@@ -72,6 +72,7 @@
                         ₹ <%= (stocks[idx].TOTAL_AMT + stocks[idx].ADVANCE_AMT).toFixed(2) %> 
                       </td>
                        <td>
+                        <% if(stocks[idx].ORDER_TYPE!=3) { %>
                         <% if(stocks[idx].GOLDSMITH_USER_ID) { %>
                           <%= stocks[idx].GOLDSMITH_NAME %>
                           <a href="#" onclick="openAssignTo('<%= stocks[idx].ORDER_ID %>', '<%= stocks[idx].ORDER_NO %>');">
@@ -81,7 +82,7 @@
                           <button type="button" class="btn btn-primary btn-sm" onclick="openAssignTo('<%= stocks[idx].ORDER_ID %>', '<%= stocks[idx].ORDER_NO %>');">
                             <i class="bi bi-plus-circle"></i>&nbsp;Set Goldsmith
                           </button>&nbsp;&nbsp
-                        <% } %>
+                        <% } } %>
                       </td>
                       <td>
                         <%= new Date(stocks[idx].CREATED_ON).toLocaleString() %>
@@ -482,6 +483,24 @@
         $('#weight').val("");
         $('#itemAmount').val("");
       }
+    });
+    $(document).ready(function () {
+      $('#example').dataTable({
+        pageLength: 5,
+        dom: 'Bfrtip',
+        buttons: [{ 
+                     extend: 'print',
+                     title: "Order Overview Report", 
+                     customize: function ( win ) {
+                        $(win.document.body).find('h1').css('text-align', 'left');
+                        $(win.document.body).css( 'font-size', '9px' );
+                        $(win.document.body).find( 'table' )
+                        .addClass( 'compact' )
+                        .css( 'font-size', 'inherit' );
+                }
+              }
+        ]
+      });
     });
   </script>
   <%- include("../partials/_footer") %>

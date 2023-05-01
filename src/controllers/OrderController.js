@@ -60,7 +60,7 @@ export const addOrder = async (req, res) => {
                             return result.affectedRows;
                         });
                     }
-                    res.redirect('/viewBasicOrder?status=success&m=' + menuActive);
+                    res.redirect('/viewBasicOrder?status=success&m=1');
                 }
             }
 
@@ -95,7 +95,7 @@ export const viewOrder = async (req, res) => {
                 stocks: rows,
                 rowCount: 0,
                 name: name,
-                menuActive : menuActive
+                menuActive : 1
             });
             res.end();
         } catch (e) {
@@ -125,7 +125,7 @@ export const viewBasicOrder = async (req, res) => {
                 users : userrows,
                 rowCount: 0,
                 name: name,
-                menuActive : menuActive
+                menuActive : 1
             });
             res.end();
         } catch (e) {
@@ -143,15 +143,17 @@ export const viewCash = async (req, res) => {
         res.end();
     } else {
         var menuActive = req.query.m;
+        var openbalance = localStorage.getItem('openbalance');
         try {
-            const [rows] = await pool.query("select jo.order_no, date_format(jot.created_on,'%d-%m-%Y %H:%m:%s') as order_date, jat.action_type,jot.amount_type,jot.amount as trans_amount,jo.item_amt from jwl_order_track jot join jwl_order jo on jot.order_id=jo.order_id join jwl_action_type jat on jot.action_type_id=jat.action_type_id where jot.action_type_id in(3,5,6) and jo.is_del=0 order by jo.order_no desc, jo.created_on asc", [], (err, rows) => {
+            const [rows] = await pool.query("select jo.order_no, date_format(jot.created_on,'%d-%m-%Y %H:%m:%s') as order_date, jat.action_type,jot.amount_type,jot.amount as trans_amount,jo.item_amt from jwl_order_track jot join jwl_order jo on jot.order_id=jo.order_id join jwl_action_type jat on jot.action_type_id=jat.action_type_id where jot.action_type_id in(3,5,6,10) and jo.is_del=0 order by jo.order_no desc, jo.created_on asc", [], (err, rows) => {
                 return rows;
             });
             res.render("order/cashview", {
                 orders: rows,
                 rowCount: 0,
                 name: name,
-                menuActive : menuActive
+                menuActive : 3,
+                openbalance : openbalance
             });
             res.end();
         } catch (e) {
@@ -178,7 +180,7 @@ export const deleteOrder = async (req, res) => {
             if(status==0){
                 err = "Error"
             }
-            res.redirect('/viewBasicOrder?status=' + err + "&m=" + menuActive);
+            res.redirect('/viewBasicOrder?status=' + err + "&m=1");
             res.end();
         } catch (e) {
             console.log(e);
@@ -218,7 +220,7 @@ export const assignTo = async (req, res) => {
                     if(status==0){
                         err = "Error"
                     }
-                    res.redirect('/viewBasicOrder?status=' + err + "&m=" + menuActive);
+                    res.redirect('/viewBasicOrder?status=' + err + "&m=1");
                     res.end();
                 }
            }
@@ -275,7 +277,7 @@ export const viewOrderDetails = async (req, res) => {
                     rowCount: 0,
                     name: name,
                     isItemDeliveredFromGS : isItemDeliveredFromGS,
-                    menuActive : menuActive,
+                    menuActive : 1,
                     itemAmount : itemAmount,
                     advanceAmount : advanceAmount
                 });
@@ -289,7 +291,7 @@ export const viewOrderDetails = async (req, res) => {
                     rowCount: 0,
                     name: name,
                     isItemDeliveredFromGS : 0,
-                    menuActive : menuActive,
+                    menuActive : 1,
                     itemAmount : itemAmount,
                     advanceAmount : advanceAmount
                 });
@@ -329,7 +331,7 @@ export const addOrderInfo = async (req, res) => {
             if (err) throw err;
                 return result.affectedRows;
             });
-            res.redirect('/vieworderdet?status=success&o=' + orderNumber + "&m=" + menuActive);  
+            res.redirect('/vieworderdet?status=success&o=' + orderNumber + "&m=1");  
 
         } catch (e) {
             console.log(e);

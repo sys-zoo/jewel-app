@@ -6,13 +6,13 @@
 </style>
   <main id="main" class="main">
     <div class="pagetitle">
-      <h1><i class="bi bi-inboxes-fill"></i>&nbsp;Order Details <a href="/viewbasicorder"><b class="text-primary">Order :
+      <h1><i class="bi bi-inboxes-fill"></i>&nbsp;Order Details <a href="/viewbasicorder?m=1"><b class="text-primary">Order :
             <%= orderNumber %> 
           </b></a></h1>
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="/">Home</a></li>
-          <li class="breadcrumb-item"><a href="/viewbasicorder">Order Overview</a></li>
+          <li class="breadcrumb-item"><a href="/viewbasicorder?m=1">Order Overview</a></li>
           <li class="breadcrumb-item active">Order Details</li>
         </ol>
       </nav>
@@ -22,7 +22,7 @@
       <div class="row">
         <div class="col-lg-12">
           <div class="row">
-            <div class="col-xxl-10 col-md-10 d-flex justify-content-start border-1">
+            <!-- <div class="col-xxl-10 col-md-10 d-flex justify-content-start border-1">
               <% if(stock) { for(var idx=0; idx<stock.length; idx++) { %>
                 <a class="btn btn-light mb-2" href="viewgoldstockhis?st=1">
                   Instock <span class="badge bg-secondary text-light">
@@ -41,8 +41,8 @@
                 </button>
                 
                 <% } } %>
-            </div>
-            <div class="col-xxl-2 col-md-2 d-flex justify-content-end">
+            </div> -->
+            <div class="col-xxl-12 col-md-12 d-flex justify-content-end">
               <% if(isItemDeliveredFromGS == 0){ %>
                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#basicModal">
                   <i class="bi bi-plus-circle"></i>&nbsp;Add Order Info
@@ -62,7 +62,7 @@
         <div class="col-lg-12">
           <div class="row">
             <div class="col-xxl-12 col-md-12">
-              <table class="ui celled table" style="width:100%">
+              <table class="ui celled table" style="width:100%" id="orderOverView">
                 <thead>
                   <tr>
                     <th>Date</th>
@@ -446,5 +446,24 @@
     function isNull(value){
      return (value == null || value == undefined || value == NaN || value == '')?0:value;
    }
+   $(document).ready(function () {
+      $('#orderOverView').dataTable({
+        pageLength: 5,
+        dom: 'Bfrtip',
+        buttons: [{ 
+                     extend: 'print',
+                     title: "Cash Overview Report",
+                     className : "btn btn-primary", 
+                     customize: function ( win ) {
+                        $(win.document.body).find('h1').css('text-align', 'left');
+                        $(win.document.body).css( 'font-size', '9px' );
+                        $(win.document.body).find( 'table' )
+                        .addClass( 'compact' )
+                        .css( 'font-size', 'inherit' );
+                }
+              }
+        ]
+      });
+    });
   </script>
   <%- include("../partials/_footer") %>

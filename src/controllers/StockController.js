@@ -40,10 +40,6 @@ export const addStock = async (req, res) => {
                         const [rows] = await pool.query('SELECT * FROM JWL_STOCK', [], (err, rows) => {
                             return rows;
                         });
-                        console.info("INSTOCK_WEIGHT :" + rows[0].INSTOCK_WEIGHT);
-                        console.info("OUTSTOCK_WEIGHT :" + rows[0].OUTSTOCK_WEIGHT);
-                        console.info("request.stockType :" + request.stockType);
-
                         if ((request.stockType == 2 && rows[0].INSTOCK_WEIGHT >= request.weight) ||
                             (request.stockType == 3 && rows[0].OUTSTOCK_WEIGHT >= request.weight)) {
                             var sql = "INSERT INTO JWL_STOCK_HIS (USER_ID,STOCK_TYPE_ID,WEIGHT) VALUES ?";
@@ -64,7 +60,7 @@ export const addStock = async (req, res) => {
                     }
                 }
                 console.info("Status :" + dbStatus);
-                res.redirect('/viewStock?status=' + err + "&m=" + menuActive);
+                res.redirect('/viewStock?status=' + err + "&m=2");
             }
 
         } catch (e) {
@@ -90,6 +86,7 @@ export const viewStock = async (req, res) => {
             const [balancerows] = await pool.query('SELECT * FROM JWL_BALANCE where date(UPDATED_ON)=CURDATE()', [], (err, balancerows) => {
                 return balancerows;
             });
+            localStorage.setItem('openbalance',balancerows[0].BALANCE);
             const [allbalancerows] = await pool.query('select amount_type,sum(amount) as amount from jwl_order_track where amount_type in (1,2) and date(created_on)=curdate() group by amount_type', [], (err, balancerows) => {
                 return balancerows;
             });
@@ -105,7 +102,7 @@ export const viewStock = async (req, res) => {
                 status: status,
                 rowCount: 0,
                 name: name,
-                menuActive : menuActive,
+                menuActive : 2,
                 balancerows : balancerows,
                 allbalancerows : allbalancerows
             });
@@ -141,7 +138,7 @@ export const viewStockHis = async (req, res) => {
                 rowCount: 0,
                 name: name,
                 stockTypeId: stockTypeId,
-                menuActive : menuActive
+                menuActive : 2
             });
             res.end();
         } catch (e) {
@@ -168,7 +165,7 @@ export const viewGoldStockHis = async (req, res) => {
                 rowCount: 0,
                 name: name,
                 stockTypeId: stockTypeId,
-                menuActive : menuActive
+                menuActive : 2
             });
             res.end();
         } catch (e) {
@@ -189,10 +186,12 @@ export const updateBalance = async (req, res) => {
             var request = req.body;
             var dbStatus = 0;
             var err = "Success";
-            var menuActive = req.query.m;
             if (request) {
                 var sql = "INSERT INTO JWL_BALANCE_HIS (BALANCE_TYPE,BALANCE) VALUES ?";
-                var values = [[1, request.balance]];
+                if(request.balanceType !=2){
+                    request.balanceType = 1;
+                }
+                var values = [[ request.balanceType , request.balance]];
                 const [status] = await pool.query(sql, [values], function (err, result) {
                     if (err) throw err;
                     return result.affectedRows;
@@ -200,7 +199,11 @@ export const updateBalance = async (req, res) => {
                 if(status==0){
                     err = "Error";
                 }
-                res.redirect('/viewStock?m=1&status=' + err + "&m=" + menuActive);
+                if(request.balanceType ==2){
+                    res.redirect('/viewcash?m=3&status=' + err);
+                }else{
+                    res.redirect('/viewStock?m=1&status=' + err + "&m=2");
+                }
             }
         } catch (e) {
             console.log(e);

@@ -15,125 +15,102 @@
         <div class="col-lg-12">
           <div class="row">
             <div class="col-xxl-12 col-md-12">
-              <table id="example" class="ui celled table" style="width:100%">
-                <% var orderNo="" ; 
-                   var total_amount = 0.0;
-                   var credit_amount = 0.0;
-                   var debit_amount = 0.0;
-                 
-                if(orders) { for(var idx=0; idx<orders.length; idx++) { %>
-                  <% total_amount = parseFloat(orders[idx].total_amount);
-                  credit_amount = 0.0;
-                  debit_amount = 0.0;
-                  if(orderNo !=orders[idx].order_no) { %>
-                    <% if(orderNo !="" ) { %>
-                      
-                      <tbody>
-                        <tr>
-                          <td>
-                          </td>
-                          <td>
-                          </td>
-                          <td>
-                          </td>
-                          <td>
-                          </td>
-                          <td>
-                          </td>
-                          <td>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                          </td>
-                          <td>
-                          </td>
-                          <td>
-                          </td>
-                          <td>
-                          </td>
-                          <td>
-                          </td>
-                          <td>
-                            <%= total_amount %>
-                          </td>
-                        </tr>
-                      </tbody>
-                      <% } %>
-                        <thead>
-                          <tr>
-                            <th>Order</th>
-                            <th>Order Date</th>
-                            <th>Action Type</th>
-                            <th>Credit</th>
-                            <th>Debit</th>
-                            <th>Amount</th>
-                          </tr>
-                        </thead>
-                       
-                        <% } %>
-                          <% orderNo=orders[idx].order_no; %>
-                            <tbody>
+              <table id="cashOverView" class="table" style="width:100%">
+                <thead>
+                  <tr>
+                    <th class="cashviewtd"></th>
+                    <th class="cashviewtd"></th>
+                    <th class="cashviewtd"></th>
+                    <th class="cashviewtd"></th>
+                    <th style="background-color: #ffffff !important;color:#03501f !important">Opening Balance</th>
+                    <th
+                      style="background-color: #ffffff !important;font-weight: bold;font-size: 16px;color: #03501f !important;">
+                      ₹ <%= parseFloat(openbalance).toFixed(2) %>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% var orderNo="" ; var total_amount=0.0; var credit_amount=0.0; var debit_amount=0.0;
+                    total_amount=openbalance; credit_amount=0.0; debit_amount=0.0; if(orders) { for(var idx=0;
+                    idx<orders.length; idx++) { %>
+                    <% if(orderNo !=orders[idx].order_no) { %>
+                    
+                    <tr>
+                      <td>Order</td>
+                      <td>Order Date</td>
+                      <td>Action Type</td>
+                      <td>Credit</td>
+                      <td>Debit</td>
+                      <td>Amount</td>
+                    </tr>
+                    <% } %>
+                    <% orderNo=orders[idx].order_no; %>
                               <tr>
-                                <td>
+                                <td  class="cashviewtd">
                                   <%= orders[idx].order_no %>
                                 </td>
-                                <td>
+                                <td  class="cashviewtd">
                                   <%= orders[idx].order_date %>
                                 </td>
-                                <td>
+                                <td  class="cashviewtd">
                                   <%= orders[idx].action_type %>
                                 </td>
-                                <td>
+                                <td class="cashviewtd text-success" style="font-weight: bold;font-size: 15px;">
                                   <% if(orders[idx].amount_type==1) { %>
-                                    <%= orders[idx].trans_amount %>
-                                    <% credit_amount = parseFloat(orders[idx].trans_amount) + parseFloat(credit_amount); %>
-                                      <% } %>
+                                    ₹ <%= orders[idx].trans_amount.toFixed(2) %>
+                                      <% credit_amount=parseFloat(orders[idx].trans_amount) + parseFloat(credit_amount);
+                                        %>
+                                        <% } %>
                                 </td>
-                                <td>
+                                <td class="cashviewtd text-danger" style="font-weight: bold;font-size: 15px;">
                                   <% if(orders[idx].amount_type==2) { %>
-                                    <%= orders[idx].trans_amount %>
-                                    <% debit_amount = parseFloat(orders[idx].trans_amount) + parseFloat(debit_amount); %>
-                                      <% } %>
+                                    ₹ <%= orders[idx].trans_amount.toFixed(2) %>
+                                      <% debit_amount=parseFloat(orders[idx].trans_amount) + parseFloat(debit_amount);
+                                        %>
+                                        <% } %>
                                 </td>
-                                <td>
-                                  <% if(orders[idx].amount_type!=0) { %>
-                                    <%= orders[idx].trans_amount %>
-                                      <% } %>
-                                </td>
-                            </tbody>
-                            <% } } %>
-                            <tbody>
-                              <tr>
-                                <td>
-                                </td>
-                                <td>
-                                </td>
-                                <td>
-                                </td>
-                                <td>
-                                </td>
-                                <td>
-                                </td>
-                                <td>
-                                </td>
-                              </tr>
-                              <tr>
-                                <td>
-                                </td>
-                                <td>
-                                </td>
-                                <td>
-                                </td>
-                                <td>
-                                </td>
-                                <td>
-                                </td>
-                                <td>
-                                  <%= total_amount %>
-                                </td>
-                              </tr>
-                            </tbody>
+                                <% if(orders[idx].amount_type==1) { %>
+                                  <td class="cashviewtd text-success" style="font-weight: bold;font-size: 15px;">
+                                    <% } else { %>
+                                  <td class="cashviewtd text-danger" style="font-weight: bold;font-size: 15px;">
+                                    <% } %>
+                                      <% if(orders[idx].amount_type!=0) { %>
+                                        ₹ <%= orders[idx].trans_amount.toFixed(2) %>
+                                          <% } %>
+                                  </td>
+</tr>
+                                  <% } } %>
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td style="font-weight: bold;font-size: 13px;">
+                      Available Balance
+                    </td>
+                    <td class="text-primary" style="font-weight: bold;font-size: 16px;">
+                      <form action="/updatebalance" method="POST">
+                        <div class="input-group">
+                          <input type="number" placeholder="Advance Amount" class="form-control"
+                          min="0" max="1000000000000" aria-label="Amount (to the nearest dollar)" 
+                          name="balance" id="balance" value="<%= (parseFloat(total_amount) + parseFloat(credit_amount) -
+                          parseFloat(debit_amount)).toFixed(2) %>" style="width: 10px; font-size: 15px; font-weight: bold;" readonly
+                            >
+                            <input type="hidden" value="2"  name="balanceType" id="balanceType" >
+                            <span class="input-group-text"><button type="submit"><i class="bi bi-pin-map-fill " style="border:0px !important" ></i></button></span>
+                        </div>
+                       
+                      </form>
+                    </td>
+                  </tr>
+                </tfoot>
+
               </table>
 
             </div>
@@ -146,6 +123,6 @@
 
   </main><!-- End #main -->
   <script>
-
+  
   </script>
   <%- include("../partials/_footer") %>

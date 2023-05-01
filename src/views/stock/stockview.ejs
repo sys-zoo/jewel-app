@@ -75,7 +75,7 @@
                       <% if(stocks[idx].STOCK_TYPE_ID == 2 || stocks[idx].STOCK_TYPE_ID == 3){ %>  
                         <td> <%= stocks[idx].NAME %></td>
                         <td> <%= stocks[idx].MOBILE %></td>
-                        <td><a href="vieworderdet?o=<%= stocks[idx].ORDER_NO %>"> <%= stocks[idx].ORDER_NO %></a></td>
+                        <td><a href="vieworderdet?m=1&o=<%= stocks[idx].ORDER_NO %>"> <%= stocks[idx].ORDER_NO %></a></td>
                       <% } %>
                       <td>
                         <%= stocks[idx].WEIGHT %> grams
@@ -174,5 +174,23 @@
       $("#purchaseAmount").val(parseFloat(amount).toFixed(2));
 
     }
+     $(document).ready(function () {
+      $('#example').dataTable({
+        pageLength: 5,
+        dom: 'Bfrtip',
+        buttons: [{ 
+                     extend: 'print',
+                     title: "Stock Overview Report", 
+                     customize: function ( win ) {
+                        $(win.document.body).find('h1').css('text-align', 'left');
+                        $(win.document.body).css( 'font-size', '9px' );
+                        $(win.document.body).find( 'table' )
+                        .addClass( 'compact' )
+                        .css( 'font-size', 'inherit' );
+                }
+              }
+        ]
+      });
+    });
   </script>
   <%- include("../partials/_footer") %>

@@ -5,7 +5,7 @@
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="/">Home</a></li>
-          <li class="breadcrumb-item"><a href="/viewStock">Stock Overview</a></li>
+          <li class="breadcrumb-item"><a href="/viewStock?m=2">Stock Overview</a></li>
           <li class="breadcrumb-item active">Goldsmith Stock History</li>
         </ol>
       </nav>
@@ -47,11 +47,11 @@
                       <td> <%= users[idx].NAME %></td>
                       <td> <%= users[idx].MOBILE %></td>
                       <td>
-                        <%= users[idx].INSTOCK_WEIGHT %> grams <a href="viewStockHis?st=2&u=<%= users[idx].USER_ID %>"><i
+                        <%= users[idx].INSTOCK_WEIGHT %> grams <a href="viewStockHis?m=2&st=2&u=<%= users[idx].USER_ID %>"><i
                           class="fa fa-external-link"></i>View</a>
                       </td>
                       <td>
-                        <%= users[idx].OUTSTOCK_WEIGHT %> grams <a href="viewStockHis?st=3&u=<%= users[idx].USER_ID %>"><i
+                        <%= users[idx].OUTSTOCK_WEIGHT %> grams <a href="viewStockHis?m=2&st=3&u=<%= users[idx].USER_ID %>"><i
                           class="fa fa-external-link"></i>View</a>
                       </td>
                       <td>
@@ -148,5 +148,23 @@
       $("#purchaseAmount").val(parseFloat(amount).toFixed(2));
 
     }
+    $(document).ready(function () {
+      $('#example').dataTable({
+        pageLength: 5,
+        dom: 'Bfrtip',
+        buttons: [{ 
+                     extend: 'print',
+                     title: "Stock Out-Stock Report", 
+                     customize: function ( win ) {
+                        $(win.document.body).find('h1').css('text-align', 'left');
+                        $(win.document.body).css( 'font-size', '9px' );
+                        $(win.document.body).find( 'table' )
+                        .addClass( 'compact' )
+                        .css( 'font-size', 'inherit' );
+                }
+              }
+        ]
+      });
+    });
   </script>
   <%- include("../partials/_footer") %>
