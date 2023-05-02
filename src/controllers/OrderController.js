@@ -145,7 +145,7 @@ export const viewCash = async (req, res) => {
         var menuActive = req.query.m;
         var openbalance = localStorage.getItem('openbalance');
         try {
-            const [rows] = await pool.query("select jo.order_no, date_format(jot.created_on,'%d-%m-%Y %H:%m:%s') as order_date, jat.action_type,jot.amount_type,jot.amount as trans_amount,jo.item_amt from jwl_order_track jot join jwl_order jo on jot.order_id=jo.order_id join jwl_action_type jat on jot.action_type_id=jat.action_type_id where jot.action_type_id in(3,5,6,10) and jo.is_del=0 order by jo.order_no desc, jo.created_on asc", [], (err, rows) => {
+            const [rows] = await pool.query("select jo.order_no, date_format(jot.created_on,'%d-%m-%Y %H:%m:%s') as order_date, jat.action_type,jot.amount_type,jot.amount as trans_amount,jo.item_amt from jwl_order_track jot join jwl_order jo on jot.order_id=jo.order_id join jwl_action_type jat on jot.action_type_id=jat.action_type_id where jot.action_type_id in(3,5,6,10) and jo.is_del=0 and date(jot.UPDATED_ON)=CURDATE() and jot.IS_CLOSED_BAL=0 order by jot.order_id desc, jot.created_on asc", [], (err, rows) => {
                 return rows;
             });
             res.render("order/cashview", {

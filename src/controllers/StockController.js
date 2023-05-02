@@ -83,11 +83,13 @@ export const viewStock = async (req, res) => {
             const [rows] = await pool.query('SELECT * FROM JWL_STOCK', [], (err, rows) => {
                 return rows;
             });
-            const [balancerows] = await pool.query('SELECT * FROM JWL_BALANCE where date(UPDATED_ON)=CURDATE()', [], (err, balancerows) => {
+            const [balancerows] = await pool.query('SELECT * FROM JWL_BALANCE', [], (err, balancerows) => {
                 return balancerows;
             });
-            localStorage.setItem('openbalance',balancerows[0].BALANCE);
-            const [allbalancerows] = await pool.query('select amount_type,sum(amount) as amount from jwl_order_track where amount_type in (1,2) and date(created_on)=curdate() group by amount_type', [], (err, balancerows) => {
+            if(balancerows && balancerows.length>0 && balancerows[0]){
+                localStorage.setItem('openbalance',balancerows[0].BALANCE);
+            }
+            const [allbalancerows] = await pool.query('select amount_type,sum(amount) as amount from jwl_order_track where amount_type in (1,2) and date(created_on)=curdate() and is_closed_bal=0 group by amount_type', [], (err, balancerows) => {
                 return balancerows;
             });
             if(balancerows == undefined || balancerows.length<=0 || balancerows[0].BALANCE<=0){
